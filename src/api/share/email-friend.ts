@@ -1,0 +1,167 @@
+import { Request, Response } from 'express';
+import { NextApiRequest, NextApiResponse } from 'next'
+import { emailService } from '../../lib/email-service'
+import { DatabasePool } from '../../lib/database-pool';
+
+const dbPool = DatabasePool.getInstance()
+
+interface ChatMessage {
+  id: string
+  content: string
+  sender: 'user' | 'assistant'
+  timestamp: Date
+}
+
+interface EmailFriendRequest {
+  friendEmail: string
+  friendName: string
+  personalMessage?: string
+  messages: ChatMessage[]
+  sessionId?: string
+  title: string
+}
+
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try {
+    const { friendEmail, friendName, personalMessage, messages, sessionId, title }: EmailFriendRequest = req.body
+
+    if (!friendEmail || !friendName || !messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: 'Friend email, name, and messages are required' })
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(friendEmail)) {
+      return res.status(400).json({ error: 'Invalid email format' })
+    }
+
+    // Get current user info for context
+    let senderEmail = 'Treatment AI User'
+    try {
+      const sessionToken = req.headers.authorization?.replace('Bearer ', '')
+      if (sessionToken) {
+        const userResult = await dbPool.query(
+          'SELECT user_email FROM user_sessions WHERE session_token = $1 AND expires_at > NOW()',
+          [sessionToken]
+        )
+        if (userResult.rows.length > 0) {
+          senderEmail = userResult.rows[0].user_email
+        }
+      }
+    } catch (error) {
+      console.error('Error getting user info:', error)
+    }
+
+    // Format messages for email
+    const formattedMessages = messages.map(msg => {
+      const timestamp = new Date(msg.timestamp).toLocaleString()
+      const sender = msg.sender === 'user' ? 'Patient' : 'Treatment AI'
+      
+      // Clean up message content
+      const cleanContent = msg.content
+        .replace(/#{1,6}\s/g, '') // Remove markdown headers
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert bold markdown to HTML
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Convert italic markdown to HTML
+        .replace(/\n/g, '<br>') // Convert newlines to HTML breaks
+      
+      return `
+        <div style="margin-bottom: 20px; padding: 15px; background-color: ${msg.sender === 'user' ? '#f0f9ff' : '#f8fafc'}; border-radius: 8px; border-left: 4px solid ${msg.sender === 'user' ? '#3b82f6' : '#10b981'};">
+          <div style="font-weight: bold; color: #374151; margin-bottom: 5px;">${sender}</div>
+          <div style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">${timestamp}</div>
+          <div style="color: #111827; line-height: 1.5;">${cleanContent}</div>
+        </div>
+      `
+    }).join('')
+
+    // Create email content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Treatment AI Chat Session Shared</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 30px; padding: 20px; background-color: #f0f9ff; border-radius: 10px;">
+          <h1 style="color: #059669; margin: 0; font-size: 24px;">Treatment AI Chat Session</h1>
+          <p style="color: #6b7280; margin: 10px 0 0 0; font-size: 14px;">Shared by ${senderEmail}</p>
+          <p style="color: #6b7280; margin: 5px 0 0 0; font-size: 12px;">Generated on ${new Date().toLocaleString()}</p>
+        </div>
+        
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+          <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">Hello ${friendName}!</h3>
+          <p style="color: #92400e; margin: 0; font-size: 14px;">
+            Someone has shared a Treatment AI chat session with you.
+            ${personalMessage ? `<br><br><strong>Personal Message:</strong><br>${personalMessage.replace(/\n/g, '<br>')}` : ''}
+          </p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <h2 style="color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">Chat Messages (${messages.length} total)</h2>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          ${formattedMessages}
+        </div>
+        
+        <div style="text-align: center; padding: 20px; background-color: #f8fafc; border-radius: 10px; margin-top: 30px;">
+          <p style="color: #6b7280; margin: 0; font-size: 12px;">
+            This email was generated by Treatment AI. For questions or support, please contact your healthcare provider.
+          </p>
+          <p style="color: #6b7280; margin: 10px 0 0 0; font-size: 12px;">
+            <strong>Medical Disclaimer:</strong> This chat session is for informational purposes only and should not replace professional medical advice.
+          </p>
+          <p style="color: #ef4444; margin: 10px 0 0 0; font-size: 12px;">
+            <strong>Privacy Notice:</strong> This medical information was shared with you by ${senderEmail}. Please handle this information confidentially.
+          </p>
+        </div>
+      </body>
+      </html>
+    `
+
+    // Send email
+    const emailResult = await emailService.sendOTPEmail(
+      friendEmail,
+      '', // OTP code not needed for this use case
+      'signup' // Type parameter
+    )
+
+    if (!emailResult.success) {
+      console.error('Email sending failed:', emailResult.error)
+      return res.status(500).json({ error: 'Failed to send email' })
+    }
+
+    // Log the email activity (optional)
+    try {
+      await dbPool.query(
+        'INSERT INTO email_activity_log (email, activity_type, session_id, recipient_email, created_at) VALUES ($1, $2, $3, $4, $5)',
+        [senderEmail, 'chat_share_friend', sessionId || null, friendEmail, new Date()]
+      )
+    } catch (logError) {
+      console.error('Failed to log email activity:', logError)
+      // Don't fail the request if logging fails
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Email sent successfully',
+      messageId: emailResult.messageId 
+    })
+
+  } catch (error) {
+    console.error('Error sending email:', error)
+    res.status(500).json({ error: 'Failed to send email' })
+  }
+}
+
+export default async function expressAdapter(req: Request, res: Response) {
+  return await handler(req as any, res as any);
+}

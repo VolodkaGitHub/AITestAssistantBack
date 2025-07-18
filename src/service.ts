@@ -1,0 +1,89 @@
+import { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+
+import accountLinkingStatus from './api/account-linking/status';
+
+import acceptInvitation from './api/accounts/accept-invitation';
+import accessHistory from './api/accounts/access-history';
+import createInvitation from './api/accounts/invite';
+import fetchLinkedAccounts from './api/accounts/linked';
+import managePermissions from './api/accounts/manage-permissions';
+import sharedData from './api/accounts/shared-data';
+import unlinkAccount from './api/accounts/unlink';
+import validateAccess from './api/accounts/validate-access';
+
+import validate from './api/address/validate';
+
+import dashboard from './api/admin/dashboard';
+import databaseStatus from './api/admin/database-status';
+import generateSdcoEmbeddings from './api/admin/generate-sdco-embeddings';
+import metrics from './api/admin/metrics';
+import performanceMetrics from './api/admin/performance-metrics';
+import performanceStats from './api/admin/performance-stats';
+import sessions from './api/admin/sessions';
+import stats from './api/admin/stats';
+import tokenUsage from './api/admin/token-usage';
+
+import chat from './api/agent/chat';
+import goals from './api/agent/goals';
+import profile from './api/agent/profile';
+
+
+
+export function setupServices(app: Express, baseUrl: string) {
+
+  app.get('/api/account-linking/status', accountLinkingStatus);
+
+  app.post('/api/accounts/accept-invitation', acceptInvitation);
+  app.get('/api/accounts/access-history', accessHistory);
+  app.post('/api/accounts/invite', createInvitation);
+  app.get('/api/accounts/linked', fetchLinkedAccounts);
+  app.put('/api/accounts/manage-permissions', managePermissions);
+  app.post('/api/accounts/shared-data', sharedData);
+  app.delete('/api/accounts/unlink', unlinkAccount);
+  app.post('/api/accounts/validate-access', validateAccess);
+
+  app.post('/api/address/validate', validate);
+
+  app.get('/api/admin/dashboard', dashboard);
+  app.get('/api/admin/database-status', databaseStatus);
+  //app.post('/api/admin/generate-sdco-embeddings', generateSdcoEmbeddings);
+  app.get('/api/admin/metrics', metrics);
+  app.get('/api/admin/performance-metrics', performanceMetrics);
+  app.get('/api/admin/performance-stats', performanceStats);
+  app.get('/api/admin/sessions', sessions);
+  app.get('/api/admin/stats', stats);
+  app.get('/api/admin/token-usage', tokenUsage);
+
+  //app.post('/api/agent/chat', chat);
+  app.get('/api/agent/goals', goals);
+  app.post('/api/agent/goals', goals);
+  app.get('/api/agent/profile', profile);
+  app.post('/api/agent/profile', profile);
+
+  const swaggerOptions = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'My Express API',
+        version: '1.0.0',
+        description: 'Auto-generated API docs with JWT support',
+      },
+      servers: [{ url: baseUrl }],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      }
+    },
+    apis: ['./src/api/**/*.ts'],
+  };
+
+  const swaggerSpec = swaggerJsdoc(swaggerOptions);
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
