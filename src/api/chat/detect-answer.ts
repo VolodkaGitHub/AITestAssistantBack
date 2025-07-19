@@ -15,7 +15,7 @@ interface AnswerDetectionResult {
 
 /**
  * @openapi
- * /api/answer-detection:
+ * /api/chat/answer-detection:
  *   post:
  *     summary: Detect if user answered a diagnostic question
  *     description: |

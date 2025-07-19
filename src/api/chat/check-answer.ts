@@ -20,7 +20,7 @@ interface CheckAnswerResponse {
 
 /**
  * @openapi
- * /api/check-answer:
+ * /api/chat/check-answer:
  *   post:
  *     summary: Analyze user’s answer to a diagnostic question
  *     description: |

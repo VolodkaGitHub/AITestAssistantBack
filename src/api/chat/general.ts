@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 /**
  * @openapi
- * /api/general-chat:
+ * /api/chat/general-chat:
  *   post:
  *     summary: General medical assistant chat endpoint
  *     description: |

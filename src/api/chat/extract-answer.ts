@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 /**
  * @openapi
- * /api/extract-answer:
+ * /api/chat/extract-answer:
  *   post:
  *     summary: Extract answer from user message for a diagnostic question
  *     description: |

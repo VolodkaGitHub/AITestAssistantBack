@@ -4,7 +4,7 @@ import { chatMemoryExtractor } from '../../lib/chat-memory-extractor'
 
 /**
  * @openapi
- * /api/extract-memory:
+ * /api/chat/extract-memory:
  *   post:
  *     summary: Extract memory and context from user chat history
  *     description: |
