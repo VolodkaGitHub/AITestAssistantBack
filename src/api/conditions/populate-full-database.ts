@@ -15,6 +15,66 @@ interface PopulateResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/conditions/populate-full-database:
+ *   post:
+ *     summary: Populate all conditions from Merlin API
+ *     description: Performs a one-time full population of the conditions database by fetching all conditions from the external Merlin API.
+ *     tags:
+ *       - Conditions
+ *     responses:
+ *       200:
+ *         description: Successfully populated the conditions database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Successfully populated conditions database with 123 conditions from Merlin API
+ *                 conditions_count:
+ *                   type: integer
+ *                   example: 123
+ *                 already_populated:
+ *                   type: boolean
+ *                   example: false
+ *       405:
+ *         description: Method not allowed (only POST is supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error while populating database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Database population failed
+ *                 error:
+ *                   type: string
+ *                   example: Error message from database or external API
+ */
+
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PopulateResponse>

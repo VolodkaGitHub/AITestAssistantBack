@@ -17,6 +17,79 @@ interface ErrorResponse {
   error: string;
 }
 
+/**
+ * @openapi
+ * /api/conditions/search:
+ *   get:
+ *     summary: Search conditions
+ *     description: Performs a search through the conditions database using a query string.
+ *     tags:
+ *       - Conditions
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         description: The search query string.
+ *         schema:
+ *           type: string
+ *           example: diab
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Maximum number of results to return (default is 50).
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *     responses:
+ *       200:
+ *         description: Successfully returned search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 conditions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 total:
+ *                   type: integer
+ *                   example: 3
+ *                 query:
+ *                   type: string
+ *                   example: diab
+ *       400:
+ *         description: Missing or invalid query parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Query parameter "q" is required
+ *       405:
+ *         description: Method Not Allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error during search
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to search conditions
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SearchResponse | ErrorResponse>

@@ -14,6 +14,60 @@ interface ConditionsResponse {
   conditions: Condition[]
 }
 
+/**
+ * @openapi
+ * /api/conditions/list:
+ *   get:
+ *     summary: Get all available conditions
+ *     description: Returns a list of conditions from the local database. Triggers a sync with external source before returning results.
+ *     tags:
+ *       - Conditions
+ *     responses:
+ *       200:
+ *         description: List of conditions returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 conditions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "condition_abc123"
+ *                       display_name:
+ *                         type: string
+ *                         example: "Diabetes"
+ *                       source_links:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                         example: ["https://who.int/diabetes", "https://cdc.gov/diabetes"]
+ *       405:
+ *         description: Method Not Allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error while fetching conditions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error while fetching conditions
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

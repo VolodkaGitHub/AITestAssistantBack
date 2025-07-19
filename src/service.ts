@@ -33,6 +33,13 @@ import general from './api/chat/general';
 import generate from './api/chat/generate';
 import getContext from './api/chat/get-context';
 
+import initDb from './api/conditions/init-db';
+import list from './api/conditions/list';
+import populateFullDatabase from './api/conditions/populate-full-database';
+import search from './api/conditions/search';
+import sync from './api/conditions/sync';
+import user from './api/conditions/user';
+
 
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
@@ -78,7 +85,16 @@ export function setupServices(app: Express, baseUrl: string) {
   // app.post('/api/chat/extract-memory', extractMemory);
   // app.post('/api/chat/general', general);
   // app.post('/api/chat/generate', generate);
-  // app.post('/api/chat/get-context', getContext);
+  // app.get('/api/chat/get-context', getContext);
+
+  app.post('./api/conditions/init-db', initDb);
+  app.get('./api/conditions/list', list);
+  app.post('./api/conditions/populate-full-database', populateFullDatabase);
+  app.get('./api/conditions/searchse', search);
+  app.post('./api/conditions/sync', sync);
+  app.get('./api/conditions/user', user);
+  app.post('./api/conditions/user', user);
+  app.delete('./api/conditions/user', user);
 
   const swaggerOptions = {
     definition: {

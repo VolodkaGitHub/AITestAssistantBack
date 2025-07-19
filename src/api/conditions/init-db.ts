@@ -4,6 +4,49 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/conditions/init-db:
+ *   post:
+ *     summary: Initialize the user_conditions table and indexes
+ *     description: Creates the `user_conditions` table and indexes if they do not exist.
+ *     tags:
+ *       - Conditions
+ *     requestBody:
+ *       required: false
+ *     responses:
+ *       200:
+ *         description: Table and indexes created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User conditions database initialized successfully
+ *       405:
+ *         description: Method Not Allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Failed to initialize database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to initialize database
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

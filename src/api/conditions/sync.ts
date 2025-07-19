@@ -15,6 +15,53 @@ interface ConditionsResponse {
   conditions: Condition[]
 }
 
+/**
+ * @openapi
+ * /api/conditions/sync:
+ *   post:
+ *     summary: Sync static conditions into the database
+ *     description: Initializes the `conditions_library` table and inserts a predefined list of medical conditions if not already cached.
+ *     tags:
+ *       - Conditions
+ *     responses:
+ *       200:
+ *         description: Conditions successfully cached or already present.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Successfully cached 15 conditions
+ *                 cached:
+ *                   type: boolean
+ *                   example: false
+ *                 count:
+ *                   type: integer
+ *                   example: 15
+ *       405:
+ *         description: Method Not Allowed - only POST supported.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error during conditions sync
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error while syncing conditions
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

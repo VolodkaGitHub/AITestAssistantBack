@@ -10,6 +10,115 @@ interface UserCondition {
   added_date: string
 }
 
+/**
+ * @openapi
+ * /api/conditions/user:
+ *   get:
+ *     summary: Get user conditions
+ *     description: Returns all active medical conditions for the authenticated user.
+ *     tags:
+ *       - Conditions
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user conditions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 conditions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: hypertension@C0020538
+ *                       display_name:
+ *                         type: string
+ *                         example: Hypertension
+ *                       added_date:
+ *                         type: string
+ *                         format: date-time
+ *                       severity:
+ *                         type: string
+ *                         nullable: true
+ *                       notes:
+ *                         type: string
+ *                         nullable: true
+ *       401:
+ *         description: Unauthorized - missing or invalid Bearer token
+ *       500:
+ *         description: Internal server error
+ *
+ *   post:
+ *     summary: Add a condition to the user
+ *     description: Adds a new medical condition to the authenticated user.
+ *     tags:
+ *       - Conditions
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - conditionId
+ *             properties:
+ *               conditionId:
+ *                 type: string
+ *                 example: diabetes@C0011849
+ *               displayName:
+ *                 type: string
+ *                 example: Diabetes Mellitus
+ *     responses:
+ *       201:
+ *         description: Condition added successfully
+ *       400:
+ *         description: Missing required conditionId
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Condition already exists for user
+ *       500:
+ *         description: Internal server error
+ *
+ *   delete:
+ *     summary: Remove a user condition
+ *     description: Soft deletes (deactivates) a condition for the authenticated user.
+ *     tags:
+ *       - Conditions
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - conditionId
+ *             properties:
+ *               conditionId:
+ *                 type: string
+ *                 example: diabetes@C0011849
+ *     responses:
+ *       200:
+ *         description: Condition removed successfully
+ *       400:
+ *         description: Missing conditionId
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Condition not found for user
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse
