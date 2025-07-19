@@ -42,6 +42,7 @@ import user from './api/conditions/user';
 
 import getSessionCost from './api/cost/get-session-cost';
 
+import populate from './api/database/populate';
 
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
@@ -87,16 +88,17 @@ export function setupServices(app: Express, baseUrl: string) {
   // app.post('/api/chat/generate', generate);
   // app.get('/api/chat/get-context', getContext);
 
-  app.post('./api/conditions/init-db', initDb);
-  app.get('./api/conditions/list', list);
-  app.post('./api/conditions/populate-full-database', populateFullDatabase);
-  app.get('./api/conditions/searchse', search);
-  app.post('./api/conditions/sync', sync);
-  app.get('./api/conditions/user', user);
-  app.post('./api/conditions/user', user);
-  app.delete('./api/conditions/user', user);
+  app.post('/api/conditions/init-db', initDb);
+  app.get('/api/conditions/list', list);
+  app.post('/api/conditions/populate-full-database', populateFullDatabase);
+  app.get('/api/conditions/search', search);
+  app.post('/api/conditions/sync', sync);
+  app.get('/api/conditions/user', user);
+  app.post('/api/conditions/user', user);
+  app.delete('/api/conditions/user', user);
 
-  app.get('./api/cost/get-session-cost', getSessionCost);
+  app.get('/api/cost/get-session-cost', getSessionCost);
+  app.post('/api/database/populate', populate);
 
 
 

@@ -6,6 +6,57 @@ import { getValidJWTToken } from '../../lib/jwt-manager'
 
 const MERLIN_ENDPOINT = 'https://merlin-394631772515.us-central1.run.app'
 
+/**
+ * @openapi
+ * /api/database/populate:
+ *   post:
+ *     summary: Sync SDCO data from Merlin API
+ *     description: Fetches SDCO list and updates local database.
+ *     tags:
+ *       - Database
+ *     responses:
+ *       200:
+ *         description: SDCO data synchronized successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 records_inserted:
+ *                   type: integer
+ *                   example: 15
+ *                 total_records:
+ *                   type: integer
+ *                   example: 15
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to populate database"
+ *                 details:
+ *                   type: string
+ *                   example: "Timeout reached while fetching data"
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
