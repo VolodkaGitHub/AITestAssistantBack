@@ -18,6 +18,94 @@ interface CheckAnswerResponse {
   confidence: number
 }
 
+/**
+ * @openapi
+ * /api/check-answer:
+ *   post:
+ *     summary: Analyze user’s answer to a diagnostic question
+ *     description: |
+ *       Accepts a user message, a diagnostic question, and a list of possible answers.
+ *       Returns whether the user answered the question, the index of the matched answer, and confidence score.
+ *     tags:
+ *       - Chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userMessage
+ *               - question
+ *               - answerList
+ *             properties:
+ *               userMessage:
+ *                 type: string
+ *                 example: "Yes, I have severe chest pain"
+ *               question:
+ *                 type: string
+ *                 example: "Do you have chest pain?"
+ *               answerList:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example:
+ *                   - "Yes, I have pain"
+ *                   - "No, I don't have pain"
+ *     responses:
+ *       200:
+ *         description: Successful answer analysis
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 answered:
+ *                   type: boolean
+ *                   description: Whether the user answered the question
+ *                   example: true
+ *                 answerIndex:
+ *                   type: integer
+ *                   nullable: true
+ *                   description: Index of the matched answer in answerList if answered is true
+ *                   example: 0
+ *                 confidence:
+ *                   type: number
+ *                   format: float
+ *                   description: Confidence score between 0 and 1
+ *                   example: 0.95
+ *       400:
+ *         description: Bad request (missing or invalid fields)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "User message, question, and answer list are required"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CheckAnswerResponse | { error: string }>

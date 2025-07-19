@@ -172,6 +172,152 @@ async function getSDCOContextualInformation(
   }
 }
 
+/**
+ * @openapi
+ * /api/chat/generate:
+ *   post:
+ *     summary: Generate medical assistant chat response with personalized context
+ *     description: |
+ *       This endpoint receives a user message and optional conversation history along with
+ *       diagnostic and health-related contexts such as differential diagnosis, wearable data,
+ *       and diagnostic questions. It calls OpenAI's GPT-4o model to generate a compassionate,
+ *       medically-educated assistant response that never gives direct advice but provides educational insights.
+ *       The response also integrates Global Library of Medicine data and wearable health device info if available.
+ *     tags:
+ *       - Chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userMessage
+ *             properties:
+ *               userMessage:
+ *                 type: string
+ *                 description: The current user message for the medical assistant
+ *                 example: "I have a persistent cough and shortness of breath."
+ *               differentialDiagnosis:
+ *                 type: array
+ *                 description: List of differential diagnoses with probability scores
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     diagnosis:
+ *                       type: object
+ *                       properties:
+ *                         display_name:
+ *                           type: string
+ *                           example: "Chronic Bronchitis"
+ *                         display_name_layman:
+ *                           type: string
+ *                           example: "Long-term bronchitis"
+ *                     probability:
+ *                       type: number
+ *                       format: float
+ *                       example: 0.12
+ *               primarySDCOId:
+ *                 type: string
+ *                 description: Optional primary SDCO (Standardized Clinical Ontology) identifier for focused context
+ *                 example: "sdco123456"
+ *               diagnosticQuestion:
+ *                 type: object
+ *                 properties:
+ *                   question:
+ *                     type: string
+ *                     example: "Do you experience chest pain during exercise?"
+ *                   answerList:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example: ["Yes", "No", "Sometimes"]
+ *               sessionId:
+ *                 type: string
+ *                 description: Session identifier for tracking and cost management
+ *                 example: "session_abc123"
+ *               sessionToken:
+ *                 type: string
+ *                 description: Authentication token for user session validation
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR..."
+ *               conversationHistory:
+ *                 type: array
+ *                 description: Previous messages in the conversation for context
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     role:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "user"
+ *                     content:
+ *                       type: string
+ *                       example: "I have been coughing for two weeks."
+ *     responses:
+ *       200:
+ *         description: Successfully generated medical assistant response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 response:
+ *                   type: string
+ *                   description: Generated assistant message integrating all contexts
+ *                   example: |
+ *                     Thank you for sharing your symptoms. Persistent cough can have many causes, including...
+ *                 cached:
+ *                   type: boolean
+ *                   description: Indicates if the response was served from cache
+ *                   example: false
+ *                 timing:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                       description: Total processing time in milliseconds
+ *                       example: 1350
+ *                     parallel:
+ *                       type: integer
+ *                       description: Time spent on parallel data fetching in milliseconds
+ *                       example: 400
+ *                     cache:
+ *                       type: string
+ *                       description: Cache status, e.g. HIT or MISS
+ *                       example: "MISS"
+ *       400:
+ *         description: Bad request due to missing or invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing required fields"
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error during processing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 response:
+ *                   type: string
+ *                   example: "I apologize, but I'm having trouble processing your request right now. Please consult with a healthcare provider for assistance with your medical concerns."
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -432,7 +578,7 @@ ${autoHealthContext ? `AUTOMATIC PATIENT HEALTH CONTEXT:\n${autoHealthContext}\n
 }
 
 // Export with rate limiting protection
-export default withScalableMiddleware('CHAT_MESSAGE', {
+export const handlerWithMiddleware = withScalableMiddleware('CHAT_MESSAGE', {
   requireSession: false,
   requireUserContext: false
 })(handler)

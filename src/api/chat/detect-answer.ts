@@ -13,6 +13,103 @@ interface AnswerDetectionResult {
   explanation: string
 }
 
+/**
+ * @openapi
+ * /api/answer-detection:
+ *   post:
+ *     summary: Detect if user answered a diagnostic question
+ *     description: |
+ *       Accepts a user message and a diagnostic question with answer options.
+ *       Returns whether the user answered, which option matches, confidence score, and explanation.
+ *     tags:
+ *       - Chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userMessage
+ *               - diagnosticQuestion
+ *             properties:
+ *               userMessage:
+ *                 type: string
+ *                 example: "Yes, I've been having chest pain"
+ *               diagnosticQuestion:
+ *                 type: object
+ *                 required:
+ *                   - question
+ *                   - answerList
+ *                 properties:
+ *                   question:
+ *                     type: string
+ *                     example: "Do you have chest pain?"
+ *                   answerList:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example:
+ *                       - "No"
+ *                       - "Yes"
+ *     responses:
+ *       200:
+ *         description: Successful answer detection
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 answered:
+ *                   type: boolean
+ *                   description: Whether the user answered the question
+ *                   example: true
+ *                 answerIndex:
+ *                   type: integer
+ *                   nullable: true
+ *                   description: Index of the matched answer option if answered is true
+ *                   example: 1
+ *                 confidence:
+ *                   type: number
+ *                   format: float
+ *                   description: Confidence score between 0 and 100
+ *                   example: 95
+ *                 explanation:
+ *                   type: string
+ *                   description: Brief explanation of the reasoning
+ *                   example: "User confirmed having chest pain, which corresponds to 'Yes'"
+ *       400:
+ *         description: Bad request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing diagnostic question data"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Answer detection failed"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

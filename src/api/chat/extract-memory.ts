@@ -2,6 +2,117 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { chatMemoryExtractor } from '../../lib/chat-memory-extractor'
 
+/**
+ * @openapi
+ * /api/extract-memory:
+ *   post:
+ *     summary: Extract memory and context from user chat history
+ *     description: |
+ *       Accepts a session token, session ID, and chat messages.
+ *       Validates the session, extracts memories from chat history,
+ *       and returns updated user context and contextual summary.
+ *     tags:
+ *       - Chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionToken
+ *               - sessionId
+ *               - messages
+ *             properties:
+ *               sessionToken:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *               sessionId:
+ *                 type: string
+ *                 example: "session_12345"
+ *               messages:
+ *                 type: array
+ *                 description: Array of chat messages to process
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     role:
+ *                       type: string
+ *                       example: "user"
+ *                     content:
+ *                       type: string
+ *                       example: "Hello, how can I get help?"
+ *     responses:
+ *       200:
+ *         description: Successful extraction of memories and context
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 extractedMemories:
+ *                   type: array
+ *                   description: Extracted memory items from chat history
+ *                   items:
+ *                     type: object
+ *                 context:
+ *                   type: object
+ *                   description: Updated user chat context
+ *                 contextualSummary:
+ *                   type: string
+ *                   description: Generated contextual summary of chat
+ *                 memoryCount:
+ *                   type: integer
+ *                   description: Number of extracted memories
+ *                   example: 3
+ *       400:
+ *         description: Bad request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing required fields"
+ *       401:
+ *         description: Unauthorized - invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid session"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to extract memory"
+ *                 details:
+ *                   type: string
+ *                   example: "Error message details"
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

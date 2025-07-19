@@ -6,6 +6,109 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
+/**
+ * @openapi
+ * /api/extract-answer:
+ *   post:
+ *     summary: Extract answer from user message for a diagnostic question
+ *     description: |
+ *       Receives a user message, diagnostic question, and possible answers.
+ *       Returns whether the user answered, which answer option matches, confidence score, and explanation.
+ *     tags:
+ *       - Chat
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userMessage
+ *               - question
+ *               - answerList
+ *             properties:
+ *               userMessage:
+ *                 type: string
+ *                 example: "My throat is really sore"
+ *               question:
+ *                 type: string
+ *                 example: "Have you had a sore throat?"
+ *               answerList:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example:
+ *                   - "No throat problems"
+ *                   - "Sore throat present"
+ *     responses:
+ *       200:
+ *         description: Successful extraction of answer
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 answered:
+ *                   type: boolean
+ *                   description: Whether the user answered the question
+ *                   example: true
+ *                 answerIndex:
+ *                   type: integer
+ *                   nullable: true
+ *                   description: Index of the matched answer option
+ *                   example: 1
+ *                 confidence:
+ *                   type: number
+ *                   format: float
+ *                   description: Confidence score from 0.0 to 1.0
+ *                   example: 0.95
+ *                 explanation:
+ *                   type: string
+ *                   description: Explanation of reasoning
+ *                   example: "User explicitly mentions having a sore throat"
+ *       400:
+ *         description: Bad request - missing required parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing required parameters"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 answered:
+ *                   type: boolean
+ *                   example: false
+ *                 answerIndex:
+ *                   type: integer
+ *                   nullable: true
+ *                   example: null
+ *                 confidence:
+ *                   type: number
+ *                   format: float
+ *                   example: 0
+ *                 explanation:
+ *                   type: string
+ *                   example: "Error analyzing response"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
