@@ -40,12 +40,12 @@ import search from './api/conditions/search';
 import sync from './api/conditions/sync';
 import user from './api/conditions/user';
 
+import getSessionCost from './api/cost/get-session-cost';
+
 
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
-
-
 
 
 export function setupServices(app: Express, baseUrl: string) {
@@ -95,6 +95,10 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('./api/conditions/user', user);
   app.post('./api/conditions/user', user);
   app.delete('./api/conditions/user', user);
+
+  app.get('./api/cost/get-session-cost', getSessionCost);
+
+
 
   const swaggerOptions = {
     definition: {

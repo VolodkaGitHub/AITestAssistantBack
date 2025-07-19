@@ -2,6 +2,79 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { costTracker } from '../../lib/cost-tracker'
 
+/**
+ * @openapi
+ * /api/cost/get-session-cost:
+ *   get:
+ *     summary: Get cost statistics by sessionId
+ *     description: Returns input/output token counts, costs, and formatted total cost for a given session ID.
+ *     tags:
+ *       - Cost
+ *     parameters:
+ *       - in: query
+ *         name: sessionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Unique identifier of the session
+ *     responses:
+ *       200:
+ *         description: Successful response with cost data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 inputTokens:
+ *                   type: integer
+ *                   example: 100
+ *                 outputTokens:
+ *                   type: integer
+ *                   example: 150
+ *                 totalTokens:
+ *                   type: integer
+ *                   example: 250
+ *                 inputCost:
+ *                   type: number
+ *                   format: float
+ *                   example: 0.0025
+ *                 outputCost:
+ *                   type: number
+ *                   format: float
+ *                   example: 0.00375
+ *                 totalCost:
+ *                   type: number
+ *                   format: float
+ *                   example: 0.00625
+ *                 callCount:
+ *                   type: integer
+ *                   example: 3
+ *                 formattedCost:
+ *                   type: string
+ *                   example: "$0.0063"
+ *       400:
+ *         description: Bad request — missing or invalid sessionId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Session ID is required"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ */
+
+
 function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
