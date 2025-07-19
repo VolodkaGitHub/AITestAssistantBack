@@ -25,9 +25,19 @@ import sessions from './api/admin/sessions';
 import stats from './api/admin/stats';
 import tokenUsage from './api/admin/token-usage';
 
+import checkAnswer from './api/chat/check-answer';
+import detectAnswer from './api/chat/detect-answer';
+import extractAnswer from './api/chat/extract-answer';
+import extractMemory from './api/chat/extract-memory';
+import general from './api/chat/general';
+import generate from './api/chat/generate';
+import getContext from './api/chat/get-context';
+
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
+
 
 
 
@@ -55,12 +65,20 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/admin/sessions', sessions);
   app.get('/api/admin/stats', stats);
   app.get('/api/admin/token-usage', tokenUsage);
-
-  //app.post('/api/agent/chat', chat);
+  
+  // app.post('/api/agent/chat', chat);
   app.get('/api/agent/goals', goals);
   app.post('/api/agent/goals', goals);
   app.get('/api/agent/profile', profile);
   app.post('/api/agent/profile', profile);
+
+  // app.post('/api/chat/check-answer', checkAnswer);
+  // app.post('/api/chat/detect-answer', detectAnswer);
+  // app.post('/api/chat/extract-answer', extractAnswer);
+  // app.post('/api/chat/extract-memory', extractMemory);
+  // app.post('/api/chat/general', general);
+  // app.post('/api/chat/generate', generate);
+  // app.post('/api/chat/get-context', getContext);
 
   const swaggerOptions = {
     definition: {
