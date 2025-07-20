@@ -11,6 +11,115 @@ const openai = new OpenAI({
  * Fallback diagnostic session creation when Merlin API is unavailable
  * Uses OpenAI directly for medical analysis while maintaining chat functionality
  */
+
+/**
+ * @openapi
+ * /api/diagnostic/fallback-session:
+ *   post:
+ *     summary: Create fallback diagnostic session using OpenAI
+ *     description: |
+ *       This endpoint is used when the main Merlin diagnostic service is unavailable. It takes user symptoms and uses OpenAI to generate a differential diagnosis and a relevant diagnostic question.
+ *     tags:
+ *       - Diagnostic
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - initialSymptoms
+ *             properties:
+ *               initialSymptoms:
+ *                 type: string
+ *                 description: Symptoms provided by the user.
+ *                 example: "Headache, dizziness, nausea"
+ *               sessionToken:
+ *                 type: string
+ *                 description: Optional token to validate session context.
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *     responses:
+ *       200:
+ *         description: Fallback diagnostic session created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sessionId:
+ *                   type: string
+ *                   example: "fallback_1721458945123_abc9xy7yz"
+ *                 differentialDiagnosis:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       diagnosis:
+ *                         type: object
+ *                         properties:
+ *                           display_name:
+ *                             type: string
+ *                             example: "Migraine"
+ *                           display_name_layman:
+ *                             type: string
+ *                             example: "Severe headache"
+ *                       probability:
+ *                         type: number
+ *                         format: float
+ *                         example: 0.6
+ *                 firstQuestion:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     question:
+ *                       type: string
+ *                       example: "Is the headache localized or generalized?"
+ *                     answerList:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["Localized", "Generalized", "Comes and goes", "Not sure"]
+ *                 fallbackMode:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Diagnostic session created in fallback mode due to server unavailability"
+ *       400:
+ *         description: Missing or invalid input.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing symptoms"
+ *       405:
+ *         description: Method not allowed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error while creating fallback session.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create fallback diagnostic session"
+ *                 details:
+ *                   type: string
+ *                   example: "Unexpected token < in JSON at position 0"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log('🏥 FALLBACK DIAGNOSTIC SESSION - Creating OpenAI-based session')
   

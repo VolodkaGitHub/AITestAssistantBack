@@ -12,6 +12,104 @@ interface DiagnosticQuestionResponse {
   persistanceSession: string
 }
 
+/**
+ * @openapi
+ * /api/diagnostic/get-next-question:
+ *   put:
+ *     summary: Get next diagnostic question
+ *     description: Returns the next diagnostic question based on the current session.
+ *     tags:
+ *       - Diagnostic
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - persistanceSession
+ *             properties:
+ *               persistanceSession:
+ *                 type: string
+ *                 description: Diagnostic session identifier
+ *                 example: "session_123456789"
+ *     responses:
+ *       200:
+ *         description: Next question retrieved or session completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 question:
+ *                   type: string
+ *                   example: "Do you have a fever?"
+ *                 answerOptions:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["Yes", "No", "Not sure"]
+ *                 persistanceSession:
+ *                   type: string
+ *                   example: "session_123456789"
+ *                 endpoint:
+ *                   type: string
+ *                   example: "PUT /api/v1/dx-session/get-next-question"
+ *                 noMoreQuestions:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "All diagnostic questions have been answered"
+ *       400:
+ *         description: Missing or invalid session ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "persistanceSession is required"
+ *       401:
+ *         description: JWT authentication failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to get JWT token"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed - PUT required"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 details:
+ *                   type: string
+ *                   example: "fetch failed"
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed - PUT required' })

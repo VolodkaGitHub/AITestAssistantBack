@@ -44,6 +44,11 @@ import getSessionCost from './api/cost/get-session-cost';
 
 import populate from './api/database/populate';
 
+import fallbackSession from './api/diagnostic/fallback-session';
+import getNextQuestion from './api/diagnostic/get-next-question';
+import getNextUnansweredQuestion from './api/diagnostic/get-next-unanswered-question';
+import submitAnswer from './api/diagnostic/submit-answer';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -99,6 +104,12 @@ export function setupServices(app: Express, baseUrl: string) {
 
   app.get('/api/cost/get-session-cost', getSessionCost);
   app.post('/api/database/populate', populate);
+
+  // app.post('/api/diagnostic/fallback-session', fallbackSession);
+  app.put('/api/diagnostic/get-next-question', getNextQuestion);
+  app.post('/api/diagnostic/get-next-unanswered-question', getNextUnansweredQuestion);
+  app.post('/api/diagnostic/submit-answer', submitAnswer);
+
 
 
 

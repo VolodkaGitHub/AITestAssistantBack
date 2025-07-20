@@ -8,6 +8,110 @@ interface SubmitAnswerRequest {
   answerText?: string
 }
 
+/**
+ * @openapi
+ * /api/diagnostic/submit-answer:
+ *   post:
+ *     summary: Submit answer to diagnostic question
+ *     description: Submits an answer for the current diagnostic session question. Uses fallback mode if Merlin API is unavailable.
+ *     tags:
+ *       - Diagnostic
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - persistanceSession
+ *               - answerIndex
+ *             properties:
+ *               persistanceSession:
+ *                 type: string
+ *                 description: The diagnostic session ID
+ *                 example: "session_abc123"
+ *               answerIndex:
+ *                 type: integer
+ *                 description: Selected answer index
+ *                 example: 1
+ *               answerText:
+ *                 type: string
+ *                 description: Optional free-text answer
+ *                 example: "Sometimes, depending on the weather"
+ *     responses:
+ *       200:
+ *         description: Answer submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Answer submitted successfully"
+ *                 persistanceSession:
+ *                   type: string
+ *                   example: "session_abc123"
+ *                 answerIndex:
+ *                   type: integer
+ *                   example: 1
+ *                 answerText:
+ *                   type: string
+ *                   example: "Sometimes, depending on the weather"
+ *                 fallbackMode:
+ *                   type: boolean
+ *                   example: false
+ *                 result:
+ *                   type: object
+ *                   description: Additional result from Merlin or fallback
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "persistanceSession and answerIndex are required"
+ *       401:
+ *         description: Failed to authenticate with JWT
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to get JWT token"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed - POST required"
+ *       500:
+ *         description: Internal or Merlin API error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 details:
+ *                   type: string
+ *                   example: "Merlin API Internal Error"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed - POST required' })

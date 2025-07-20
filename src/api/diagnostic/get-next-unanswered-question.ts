@@ -3,6 +3,97 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { getValidJWTToken } from '../../lib/jwt-manager'
 
+/**
+ * @openapi
+ * /api/diagnostic/get-next-unanswered-question:
+ *   post:
+ *     summary: Get next unanswered diagnostic question
+ *     description: Returns the next unanswered question for an existing diagnostic session.
+ *     tags:
+ *       - Diagnostic
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionId
+ *             properties:
+ *               sessionId:
+ *                 type: string
+ *                 description: Existing diagnostic session ID
+ *                 example: "session_abc123"
+ *     responses:
+ *       200:
+ *         description: Question retrieved or no more questions available
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 question:
+ *                   type: string
+ *                   nullable: true
+ *                   example: "Do you have a headache?"
+ *                 answerList:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: string
+ *                   example: ["Yes", "No", "Sometimes"]
+ *                 sessionId:
+ *                   type: string
+ *                   example: "session_abc123"
+ *                 note:
+ *                   type: string
+ *                   nullable: true
+ *                   example: "No more questions available"
+ *       400:
+ *         description: Missing sessionId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Session ID is required"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Failed to retrieve question or internal error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to get next diagnostic question"
+ *                 details:
+ *                   type: string
+ *                   example: "Merlin API Internal Server Error - indicates API call problem"
+ *                 question:
+ *                   type: string
+ *                   nullable: true
+ *                 answerList:
+ *                   type: array
+ *                   nullable: true
+ *                   items:
+ *                     type: string
+ *                 sessionId:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
