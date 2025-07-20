@@ -2,6 +2,152 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { DatabasePool } from '../../lib/database-pool';
 
+/**
+ * @openapi
+ * /api/health-check/overview:
+ *   get:
+ *     summary: Get health overview for authenticated user
+ *     description: >
+ *       Returns a summary of the user's health data including current medications,
+ *       wearable device connections, and recent health timeline events.
+ *     tags:
+ *       - HealthCheck
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Health overview retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 healthData:
+ *                   type: object
+ *                   properties:
+ *                     medications:
+ *                       type: object
+ *                       properties:
+ *                         total_count:
+ *                           type: integer
+ *                           example: 3
+ *                         current:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                                 example: "Aspirin"
+ *                               dosage:
+ *                                 type: string
+ *                                 example: "100mg"
+ *                               frequency:
+ *                                 type: string
+ *                                 example: "Once a day"
+ *                               is_active:
+ *                                 type: boolean
+ *                                 example: true
+ *                               startDate:
+ *                                 type: string
+ *                                 format: date
+ *                                 example: "2023-01-01"
+ *                     wearables:
+ *                       type: object
+ *                       properties:
+ *                         total_count:
+ *                           type: integer
+ *                           example: 2
+ *                         connections:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               provider:
+ *                                 type: string
+ *                                 example: "Fitbit"
+ *                               status:
+ *                                 type: string
+ *                                 example: "connected"
+ *                               lastSync:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 example: "2025-07-20T10:00:00Z"
+ *                               connectedAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 example: "2025-06-01T09:30:00Z"
+ *                               is_active:
+ *                                 type: boolean
+ *                                 example: true
+ *                     timeline:
+ *                       type: object
+ *                       properties:
+ *                         total_count:
+ *                           type: integer
+ *                           example: 10
+ *                         recent:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               type:
+ *                                 type: string
+ *                                 example: "session_id"
+ *                               summary:
+ *                                 type: string
+ *                                 example: "Patient reported mild headache"
+ *                               date:
+ *                                 type: string
+ *                                 format: date
+ *                                 example: "2025-07-19"
+ *                               createdAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 example: "2025-07-19T12:00:00Z"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-07-20T12:00:00Z"
+ *       '401':
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authorization token required"
+ *       '405':
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to retrieve health overview"
+ *                 details:
+ *                   type: string
+ *                   example: "Database connection error"
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

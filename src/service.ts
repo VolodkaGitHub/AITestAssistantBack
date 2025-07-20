@@ -58,6 +58,8 @@ import medications from './api/health/medications';
 import timeline from './api/health/timeline';
 import vitals from './api/health/vitals';
 
+import overview from './api/health-check/overview';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -128,6 +130,8 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/health/timeline', timeline);
   app.delete('/api/health/timeline', timeline);
   app.get('/api/health/vitals', vitals);
+
+  app.get('/api/health-check/overview', overview);
 
 
 
