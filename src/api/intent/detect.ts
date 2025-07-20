@@ -12,6 +12,53 @@ export interface IntentDetectionResult {
   reasoning: string
 }
 
+/**
+ * @openapi
+ * /api/intent/detect:
+ *   post:
+ *     summary: Detects whether the user's message is a diagnostic request
+ *     tags:
+ *       - Intent
+ *     description: Determines if a user's message relates to a medical diagnosis.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userMessage
+ *             properties:
+ *               userMessage:
+ *                 type: string
+ *                 description: The user's message
+ *                 example: "I have a fever and sore throat"
+ *     responses:
+ *       200:
+ *         description: Intent detection result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isDiagnostic:
+ *                   type: boolean
+ *                   description: Whether the message is diagnostic
+ *                 confidence:
+ *                   type: number
+ *                   format: float
+ *                   description: Classification confidence (0–100)
+ *                 reasoning:
+ *                   type: string
+ *                   description: Classification explanation
+ *       400:
+ *         description: Invalid request
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

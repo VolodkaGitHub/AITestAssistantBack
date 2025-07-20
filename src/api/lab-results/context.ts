@@ -40,6 +40,121 @@ interface LabContextResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/lab-results/context:
+ *   get:
+ *     summary: Get lab results context for diagnostics
+ *     description: Provides lab results and summaries for OpenAI diagnostic conversations using Epic FHIR sandbox data.
+ *     tags:
+ *       - LabResults
+ *     parameters:
+ *       - in: query
+ *         name: patientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Patient identifier
+ *     responses:
+ *       200:
+ *         description: Lab results context successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 lab_context:
+ *                   type: object
+ *                   properties:
+ *                     recent_labs:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           value:
+ *                             type: string
+ *                           unit:
+ *                             type: string
+ *                             nullable: true
+ *                           date:
+ *                             type: string
+ *                           status:
+ *                             type: string
+ *                     abnormal_values:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           value:
+ *                             type: string
+ *                           reference_range:
+ *                             type: string
+ *                             nullable: true
+ *                           status:
+ *                             type: string
+ *                     critical_values:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           value:
+ *                             type: string
+ *                           reference_range:
+ *                             type: string
+ *                             nullable: true
+ *                           status:
+ *                             type: string
+ *                     summary:
+ *                       type: object
+ *                       properties:
+ *                         total_results:
+ *                           type: integer
+ *                         abnormal_count:
+ *                           type: integer
+ *                         critical_count:
+ *                           type: integer
+ *                         last_updated:
+ *                           type: string
+ *       400:
+ *         description: Missing or invalid patientId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Patient ID is required
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Failed to fetch lab results context
+ */
+
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<LabContextResponse>

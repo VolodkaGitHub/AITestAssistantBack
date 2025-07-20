@@ -15,6 +15,72 @@ interface TestConnectionResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/lab-results/test-connection:
+ *   get:
+ *     summary: Test Epic FHIR client connection
+ *     description: Tests the FHIR client connection and returns sample patients and lab results.
+ *     tags:
+ *       - LabResults
+ *     responses:
+ *       200:
+ *         description: Connection test successful, sample data returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: true
+ *                 test_patients:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                   description: Sample list of test patients (up to 3)
+ *                 sample_labs:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                   description: Sample list of lab results (up to 5)
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Error message
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TestConnectionResponse>

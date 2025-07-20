@@ -67,6 +67,11 @@ import connectToken from './api/human-api/connect-token';
 import labResultsHuman from './api/human-api/lab-results';
 import testConnection from './api/human-api/test-connection';
 
+import detect from './api/intent/detect';
+
+import labContext from './api/lab-results/context';
+import labTestConnection from './api/lab-results/test-connection';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -147,6 +152,11 @@ export function setupServices(app: Express, baseUrl: string) {
   app.post('/api/human-api/connect-token', connectToken);
   app.get('/api/human-api/lab-results', labResultsHuman);
   app.get('/api/human-api/test-connection', testConnection);
+
+  // app.post('/api/intent/detect', detect);
+
+  app.get('/api/lab-results/context', labContext);
+  app.get('/api/lab-results/test-connection', labTestConnection);
 
   const swaggerOptions = {
     definition: {
