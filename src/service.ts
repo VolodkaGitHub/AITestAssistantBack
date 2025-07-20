@@ -49,6 +49,15 @@ import getNextQuestion from './api/diagnostic/get-next-question';
 import getNextUnansweredQuestion from './api/diagnostic/get-next-unanswered-question';
 import submitAnswer from './api/diagnostic/submit-answer';
 
+import automaticContext from './api/health/automatic-context';
+import context from './api/health/context';
+import dailyScores from './api/health/daily-scores';
+import initialize from './api/health/initialize';
+import labResults from './api/health/lab-results';
+import medications from './api/health/medications';
+import timeline from './api/health/timeline';
+import vitals from './api/health/vitals';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -110,6 +119,15 @@ export function setupServices(app: Express, baseUrl: string) {
   app.post('/api/diagnostic/get-next-unanswered-question', getNextUnansweredQuestion);
   app.post('/api/diagnostic/submit-answer', submitAnswer);
 
+  app.post('/api/health/automatic-context', automaticContext);
+  app.post('/api/health/context', context);
+  app.get('/api/health/daily-scores', dailyScores);
+  app.post('/api/health/initialize', initialize);
+  app.get('/api/health/lab-results', labResults);
+  app.get('/api/health/medications', medications);
+  app.get('/api/health/timeline', timeline);
+  app.delete('/api/health/timeline', timeline);
+  app.get('/api/health/vitals', vitals);
 
 
 

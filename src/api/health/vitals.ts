@@ -4,6 +4,121 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/health/vitals:
+ *   get:
+ *     tags:
+ *       - Health
+ *     summary: Get user's vital signs
+ *     description: Retrieves a list of the authenticated user's vital sign measurements with a summary including recent and abnormal values.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vital signs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 vitals:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       measurement_date:
+ *                         type: string
+ *                         format: date
+ *                       blood_pressure_systolic:
+ *                         type: integer
+ *                       blood_pressure_diastolic:
+ *                         type: integer
+ *                       heart_rate:
+ *                         type: integer
+ *                       temperature:
+ *                         type: number
+ *                         format: float
+ *                       weight:
+ *                         type: number
+ *                         format: float
+ *                       height:
+ *                         type: number
+ *                         format: float
+ *                       bmi:
+ *                         type: number
+ *                         format: float
+ *                       oxygen_saturation:
+ *                         type: integer
+ *                       respiratory_rate:
+ *                         type: integer
+ *                       blood_glucose:
+ *                         type: number
+ *                         format: float
+ *                       notes:
+ *                         type: string
+ *                         nullable: true
+ *                       measurement_location:
+ *                         type: string
+ *                         nullable: true
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                 latest:
+ *                   type: object
+ *                   description: Most recent vital measurement
+ *                   nullable: true
+ *                 summary:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     recent:
+ *                       type: integer
+ *                       description: Number of measurements in last 7 days
+ *                     abnormal:
+ *                       type: integer
+ *                       description: Number of measurements with abnormal values
+ *                     lastMeasurementDate:
+ *                       type: string
+ *                       format: date
+ *                       nullable: true
+ *                 lastUpdated:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized - invalid or missing Bearer token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error while fetching vitals
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

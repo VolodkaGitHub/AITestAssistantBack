@@ -4,6 +4,102 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/health/lab-results:
+ *   get:
+ *     tags:
+ *       - Health
+ *     summary: Get user lab results with summary
+ *     description: Fetches up to 50 latest lab results for the authenticated user, including a summary of recent and abnormal results.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lab results fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       test_name:
+ *                         type: string
+ *                       test_value:
+ *                         type: string
+ *                       normal_range:
+ *                         type: string
+ *                       unit:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       test_date:
+ *                         type: string
+ *                         format: date
+ *                       ordering_doctor:
+ *                         type: string
+ *                       lab_name:
+ *                         type: string
+ *                       notes:
+ *                         type: string
+ *                       category:
+ *                         type: string
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                 summary:
+ *                   type: object
+ *                   properties:
+ *                     total:
+ *                       type: integer
+ *                     recent:
+ *                       type: integer
+ *                     abnormal:
+ *                       type: integer
+ *                     lastTestDate:
+ *                       type: string
+ *                       format: date
+ *                       nullable: true
+ *                 lastUpdated:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized or invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error fetching lab results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

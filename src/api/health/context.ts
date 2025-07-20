@@ -2,6 +2,67 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getHealthContextForUser } from '../../lib/health-context'
 
+/**
+ * @openapi
+ * /api/health/context:
+ *   post:
+ *     tags:
+ *       - Health
+ *     summary: Get general health context for a user
+ *     description: Returns user-specific health context information.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "user_123"
+ *     responses:
+ *       200:
+ *         description: Successful response with health context
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 context:
+ *                   type: object
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Missing userId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "userId is required"
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

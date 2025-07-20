@@ -4,6 +4,164 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/health/timeline:
+ *   get:
+ *     tags:
+ *       - Health
+ *     summary: Get health timeline entries
+ *     description: Fetches the authenticated user's health timeline entries with details and stats.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Timeline entries fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 timeline:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       userId:
+ *                         type: integer
+ *                       sessionId:
+ *                         type: string
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       symptoms:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       findings:
+ *                         type: string
+ *                       topDifferentialDiagnoses:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       chatSummary:
+ *                         type: string
+ *                       fullChatHistory:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 stats:
+ *                   type: object
+ *                   properties:
+ *                     totalEntries:
+ *                       type: integer
+ *                     lastEntry:
+ *                       type: string
+ *                       format: date
+ *                       nullable: true
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error fetching timeline
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ * 
+ *   delete:
+ *     tags:
+ *       - Health
+ *     summary: Delete a health timeline entry
+ *     description: Deletes a specified timeline entry for the authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - entryId
+ *             properties:
+ *               entryId:
+ *                 type: integer
+ *                 description: ID of the timeline entry to delete
+ *     responses:
+ *       200:
+ *         description: Timeline entry deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Timeline entry deleted successfully
+ *       400:
+ *         description: Bad request - missing entryId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Entry ID is required
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *       404:
+ *         description: Timeline entry not found or access denied
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Timeline entry not found or access denied
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error deleting timeline entry
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     return handleGetTimeline(req, res)

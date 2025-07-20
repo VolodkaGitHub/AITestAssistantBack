@@ -4,6 +4,67 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/health/initialize:
+ *   post:
+ *     tags:
+ *       - Health
+ *     summary: Initialize health database and populate sample data
+ *     description: Initializes the health database for the authenticated user and populates sample data.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Health database initialized successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Health database initialized and sample data populated"
+ *                 userId:
+ *                   type: string
+ *                   example: "user_abc123"
+ *       401:
+ *         description: Unauthorized or invalid session
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to initialize health database"
+ *                 details:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

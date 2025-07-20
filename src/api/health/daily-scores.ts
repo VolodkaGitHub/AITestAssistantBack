@@ -6,6 +6,74 @@ import { DatabasePool } from '../../lib/database-pool';
  * @deprecated This endpoint is deprecated. Use /api/terra/enrichment?type=daily instead.
  * See TERRA_API_CONSOLIDATION_MIGRATION_GUIDE.md for migration instructions.
  */
+
+/**
+ * @openapi
+ * /api/health/daily-scores:
+ *   get:
+ *     tags:
+ *       - Health
+ *     summary: Get latest daily health scores
+ *     description: Returns recent health scores (sleep, stress, respiratory) for the authenticated user.
+ *     deprecated: true
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *         description: Number of records to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved health scores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 scores:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       sleepScore:
+ *                         type: number
+ *                       stressScore:
+ *                         type: number
+ *                       respiratoryScore:
+ *                         type: number
+ *                       contributors:
+ *                         type: object
+ *                         properties:
+ *                           sleep:
+ *                             type: string
+ *                           stress:
+ *                             type: string
+ *                           respiratory:
+ *                             type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                 count:
+ *                   type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized – missing or invalid token
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

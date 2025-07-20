@@ -5,6 +5,82 @@ import { MedicationsService } from '../../lib/medications-service'
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/health/medications:
+ *   get:
+ *     tags:
+ *       - Health
+ *     summary: Get user medications and summary
+ *     description: Fetches medication records for the authenticated user along with a summary.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Medications fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medications:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       medication_id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       dosage:
+ *                         type: string
+ *                       frequency:
+ *                         type: string
+ *                       start_date:
+ *                         type: string
+ *                         format: date
+ *                       end_date:
+ *                         type: string
+ *                         format: date
+ *                         nullable: true
+ *                       prescribing_doctor:
+ *                         type: string
+ *                       notes:
+ *                         type: string
+ *                 summary:
+ *                   type: object
+ *                   description: Summary information about user's medications
+ *                 lastUpdated:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized or invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error fetching medications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
