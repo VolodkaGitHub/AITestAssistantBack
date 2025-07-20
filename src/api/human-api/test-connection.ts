@@ -15,6 +15,105 @@ interface TestConnectionResponse {
   client_configured: boolean;
 }
 
+/**
+ * @openapi
+ * /api/human-api/test-connection:
+ *   get:
+ *     summary: Test Human API client connection
+ *     description: Tests whether the Human API client is properly configured and available.
+ *     tags:
+ *       - HumanAPI
+ *     responses:
+ *       200:
+ *         description: Human API credentials are missing or misconfigured
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Human API credentials not configured.
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ *                 client_configured:
+ *                   type: boolean
+ *                   example: false
+ *       503:
+ *         description: Human API temporarily disabled
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Human API temporarily disabled
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ *                 client_configured:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Internal server error while testing connection
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error while testing connection
+ *                 environment:
+ *                   type: string
+ *                   example: development
+ *                 client_configured:
+ *                   type: boolean
+ *                   example: false
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 connection_status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Method not allowed
+ *                 environment:
+ *                   type: string
+ *                   example: unknown
+ *                 client_configured:
+ *                   type: boolean
+ *                   example: false
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TestConnectionResponse>

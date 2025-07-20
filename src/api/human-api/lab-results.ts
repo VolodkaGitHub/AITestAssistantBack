@@ -15,6 +15,87 @@ interface LabResultsResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/human-api/lab-results:
+ *   get:
+ *     summary: Get lab results for authenticated user
+ *     description: Returns lab results, user profile, and connected sources for a user authenticated via Human API. **Currently disabled.**
+ *     tags:
+ *       - HumanAPI
+ *     parameters:
+ *       - in: query
+ *         name: access_token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Access token from Human API for the authenticated user
+ *     responses:
+ *       200:
+ *         description: Lab results successfully fetched
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 lab_results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 user_profile:
+ *                   type: object
+ *                 connected_sources:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       400:
+ *         description: Access token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       503:
+ *         description: Human API integration temporarily disabled
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error while fetching lab results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<LabResultsResponse>

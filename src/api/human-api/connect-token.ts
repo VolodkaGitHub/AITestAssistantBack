@@ -14,6 +14,86 @@ interface ConnectTokenResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/human-api/connect-token:
+ *   post:
+ *     tags:
+ *       - HumanAPI
+ *     summary: Create Human API connect token
+ *     description: Creates a connect token to authenticate the user with Human API. (Currently disabled)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                 type: string
+ *                 description: The session token of the authenticated user
+ *             required:
+ *               - sessionToken
+ *     responses:
+ *       200:
+ *         description: Successfully created connect token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 connect_token:
+ *                   type: string
+ *                 connect_url:
+ *                   type: string
+ *       400:
+ *         description: Missing session token in request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       503:
+ *         description: Human API integration temporarily disabled
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 error:
+ *                   type: string
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ConnectTokenResponse>

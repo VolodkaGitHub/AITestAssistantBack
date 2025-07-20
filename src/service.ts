@@ -63,6 +63,10 @@ import overview from './api/health-check/overview';
 import index from './api/health-timeline/index';
 import save from './api/health-timeline/save';
 
+import connectToken from './api/human-api/connect-token';
+import labResultsHuman from './api/human-api/lab-results';
+import testConnection from './api/human-api/test-connection';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -139,6 +143,10 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/health-timeline/index', index);
   app.delete('/api/health-timeline/index', index);
   app.post('/api/health-timeline/save', save);
+
+  app.post('/api/human-api/connect-token', connectToken);
+  app.get('/api/human-api/lab-results', labResultsHuman);
+  app.get('/api/human-api/test-connection', testConnection);
 
   const swaggerOptions = {
     definition: {
