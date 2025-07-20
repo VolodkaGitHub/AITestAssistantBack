@@ -12,6 +12,175 @@ interface SaveHealthTimelineRequest {
   chatSummary?: string
 }
 
+/**
+ * @openapi
+ * /api/health-timeline/save:
+ *   post:
+ *     summary: Save a new health timeline entry
+ *     description: Saves a health timeline entry for the authenticated user including symptoms, findings, differential diagnoses, and chat history.
+ *     tags:
+ *       - HealthTimeline
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Health timeline entry data to save
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionId
+ *               - symptoms
+ *               - differentialDiagnoses
+ *             properties:
+ *               sessionId:
+ *                 type: string
+ *                 example: "session_abc123"
+ *               symptoms:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["headache", "fatigue"]
+ *               findings:
+ *                 type: string
+ *                 example: "Patient reported mild headache and fatigue."
+ *               differentialDiagnoses:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     diagnosis:
+ *                       type: object
+ *                       properties:
+ *                         display_name:
+ *                           type: string
+ *                           example: "Migraine"
+ *                         display_name_layman:
+ *                           type: string
+ *                           example: "Headache"
+ *                     condition:
+ *                       type: string
+ *                       example: "Migraine"
+ *                     probability:
+ *                       type: number
+ *                       example: 75
+ *                     medicalTerm:
+ *                       type: string
+ *                       example: "Migraine"
+ *                     laymanTerm:
+ *                       type: string
+ *                       example: "Headache"
+ *               chatHistory:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *               chatSummary:
+ *                 type: string
+ *                 example: "Patient consultation summary."
+ *     responses:
+ *       '200':
+ *         description: Timeline entry saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Health timeline entry saved successfully"
+ *                 entryId:
+ *                   type: integer
+ *                   example: 101
+ *                 entry:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 101
+ *                     date:
+ *                       type: string
+ *                       format: date
+ *                       example: "2025-07-20"
+ *                     symptoms:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["headache", "fatigue"]
+ *                     findings:
+ *                       type: string
+ *                       example: "Patient reported mild headache and fatigue."
+ *                     topDifferentialDiagnoses:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           condition:
+ *                             type: string
+ *                             example: "Migraine"
+ *                           probability:
+ *                             type: number
+ *                             example: 75
+ *                           medicalTerm:
+ *                             type: string
+ *                             example: "Migraine"
+ *                           laymanTerm:
+ *                             type: string
+ *                             example: "Headache"
+ *                     chatSummary:
+ *                       type: string
+ *                       example: "Patient consultation summary."
+ *       '400':
+ *         description: Missing required fields or validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Session ID and symptoms are required"
+ *       '401':
+ *         description: Unauthorized - missing or invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authentication required"
+ *       '405':
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to save health timeline entry"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

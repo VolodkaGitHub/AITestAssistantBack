@@ -60,6 +60,9 @@ import vitals from './api/health/vitals';
 
 import overview from './api/health-check/overview';
 
+import index from './api/health-timeline/index';
+import save from './api/health-timeline/save';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -132,8 +135,10 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/health/vitals', vitals);
 
   app.get('/api/health-check/overview', overview);
-
-
+  
+  app.get('/api/health-timeline/index', index);
+  app.delete('/api/health-timeline/index', index);
+  app.post('/api/health-timeline/save', save);
 
   const swaggerOptions = {
     definition: {
