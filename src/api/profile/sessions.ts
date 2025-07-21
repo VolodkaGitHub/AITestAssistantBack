@@ -2,6 +2,98 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { authDB } from '../../lib/auth-database'
 
+/**
+ * @openapi
+ * /api/profile/sessions:
+ *   get:
+ *     tags:
+ *       - Profile
+ *     summary: Get user sessions
+ *     description: Retrieves a list of all user sessions with details such as IP address, user agent, and session status.
+ *     parameters:
+ *       - name: sessionToken
+ *         in: query
+ *         description: Session token for user authentication
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user sessions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 sessions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       isActive:
+ *                         type: boolean
+ *                       ipAddress:
+ *                         type: string
+ *                       userAgent:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       lastAccessed:
+ *                         type: string
+ *                         format: date-time
+ *                       expiresAt:
+ *                         type: string
+ *                         format: date-time
+ *                       isCurrent:
+ *                         type: boolean
+ *                 totalSessions:
+ *                   type: integer
+ *                 activeSessions:
+ *                   type: integer
+ *       401:
+ *         description: Unauthorized (missing or invalid session token)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Session token required
+ *       405:
+ *         description: Method not allowed (only GET supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

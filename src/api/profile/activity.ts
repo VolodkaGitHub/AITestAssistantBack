@@ -2,6 +2,128 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { authDB } from '../../lib/auth-database'
 
+/**
+ * @openapi
+ * /api/profile/activity:
+ *   get:
+ *     tags:
+ *       - Profile
+ *     summary: Get user activity summary
+ *     description: >
+ *       Retrieves a summary of user activity including account creation date, 
+ *       verification status, session statistics, and recent verification attempts.
+ *       Requires a valid session token provided as a query parameter.
+ *     parameters:
+ *       - name: sessionToken
+ *         in: query
+ *         description: User session token for authentication
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully returned user activity data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 activity:
+ *                   type: object
+ *                   properties:
+ *                     accountCreated:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Date when the user account was created
+ *                     isVerified:
+ *                       type: boolean
+ *                       description: Indicates if the user is verified
+ *                     sessionStats:
+ *                       type: object
+ *                       properties:
+ *                         totalSessions:
+ *                           type: integer
+ *                           description: Total number of user sessions
+ *                         activeSessions:
+ *                           type: integer
+ *                           description: Number of currently active sessions
+ *                         lastActivity:
+ *                           type: string
+ *                           format: date-time
+ *                           description: Timestamp of the last user session activity
+ *                     verificationStats:
+ *                       type: object
+ *                       properties:
+ *                         totalAttempts:
+ *                           type: integer
+ *                           description: Total verification attempts
+ *                         successfulAttempts:
+ *                           type: integer
+ *                           description: Number of successful verifications
+ *                         recentHistory:
+ *                           type: array
+ *                           description: List of recent verification attempts (up to 10)
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               type:
+ *                                 type: string
+ *                                 description: Type of verification attempt
+ *                               successful:
+ *                                 type: boolean
+ *                                 description: Whether the attempt was successful
+ *                               ipAddress:
+ *                                 type: string
+ *                                 description: IP address from which the attempt was made
+ *                               createdAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                                 description: Timestamp of the attempt
+ *       401:
+ *         description: Unauthorized - session token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Session token required
+ *       404:
+ *         description: Activity data not found for the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Activity data not found
+ *       405:
+ *         description: Method not allowed (only GET supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
