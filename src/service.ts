@@ -88,6 +88,13 @@ import deleteMemory from './api/memory/delete';
 import listMemory from './api/memory/list';
 import searchMemory from './api/memory/search';
 
+import conditionsMention from './api/mention/conditions';
+import labResultsMention from './api/mention/lab-results';
+import medicationsMention from './api/mention/medications';
+import timelineMention from './api/mention/timeline';
+import vitalsMention from './api/mention/vitals';
+import wearablesMention from './api/mention/wearables';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -191,6 +198,13 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/memory/list', listMemory);
   //app.get('/api/memory/search', searchMemory);
   //app.post('/api/memory/search', searchMemory);
+
+  app.get('/api/mention/conditions', conditionsMention);
+  app.get('/api/mention/lab-results', labResultsMention);
+  app.get('/api/mention/medications', medicationsMention);
+  app.get('/api/mention/timeline', timelineMention);
+  app.get('/api/mention/vitals', vitalsMention);
+  app.get('/api/mention/wearables', wearablesMention);
 
   const swaggerOptions = {
     definition: {

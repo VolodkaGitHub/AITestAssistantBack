@@ -7,6 +7,131 @@ import { validateSessionToken } from '../../lib/auth-database'
  * Vitals Mention API
  * Returns formatted vitals data for @mention functionality
  */
+
+/**
+ * @openapi
+ * /api/mention/vitals:
+ *   get:
+ *     summary: Retrieve user vitals for mention
+ *     description: Returns formatted vital signs data for @mention functionality.
+ *     tags:
+ *       - Mention
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved vitals data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 summary:
+ *                   type: string
+ *                   description: Summary of user's vitals
+ *                   example: "5 vital measurements, 3 recent (last 30 days), Latest: BP: 120/80, HR: 70 bpm, Temp: 98.6°F, 1 abnormal readings"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     vitals:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/VitalEntry'
+ *                     latest:
+ *                       $ref: '#/components/schemas/VitalEntry'
+ *                       nullable: true
+ *                     recent:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/VitalEntry'
+ *                     abnormal:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/VitalEntry'
+ *                     total_count:
+ *                       type: integer
+ *                       description: Total number of vital entries
+ *                     recent_count:
+ *                       type: integer
+ *                       description: Number of recent vital entries (last 30 days)
+ *                     abnormal_count:
+ *                       type: integer
+ *                       description: Number of abnormal vital readings
+ *                     last_measurement_date:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                       description: Date of the latest vital measurement
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Response generation timestamp
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authorization token required"
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   schemas:
+ *     VitalEntry:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         blood_pressure_systolic:
+ *           type: integer
+ *         blood_pressure_diastolic:
+ *           type: integer
+ *         heart_rate:
+ *           type: integer
+ *         temperature:
+ *           type: number
+ *           format: float
+ *         weight:
+ *           type: number
+ *           format: float
+ *         height:
+ *           type: number
+ *           format: float
+ *         bmi:
+ *           type: number
+ *           format: float
+ *         oxygen_saturation:
+ *           type: integer
+ *         respiratory_rate:
+ *           type: integer
+ *         blood_glucose:
+ *           type: number
+ *           format: float
+ *         measurement_date:
+ *           type: string
+ *           format: date-time
+ *         measurement_location:
+ *           type: string
+ *         notes:
+ *           type: string
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

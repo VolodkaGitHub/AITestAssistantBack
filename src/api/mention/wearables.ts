@@ -13,6 +13,109 @@ interface WearableMentionData {
  * API endpoint for @mention wearables data
  * Returns last 7 days of daily health scores from all connected wearables
  */
+
+/**
+ * @openapi
+ * /api/mention/wearables:
+ *   get:
+ *     summary: Retrieve wearable health scores for mention
+ *     description: Returns last 7 days of daily health scores from all connected wearable devices.
+ *     tags:
+ *       - Mention
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved wearable health scores summary and detailed data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   example: "wearables"
+ *                 summary:
+ *                   type: string
+ *                   description: Summary of recent wearable health scores
+ *                   example: "Latest health scores (7/21/2025): Sleep: 85/100 (REM: 30, Deep: 25, Light: 20, Efficiency: 90%), Stress: 70/100 (HRV: 60, HR: 65) | Respiratory: 80/100 (O₂: 98%, Breathing: Regular). 5 days of data in last 7 days."
+ *                 detailed_data:
+ *                   type: array
+ *                   description: Detailed daily health scores for last 7 days
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       score_date:
+ *                         type: string
+ *                         format: date
+ *                       sleep_score:
+ *                         type: number
+ *                         format: float
+ *                       sleep_contributors:
+ *                         type: object
+ *                         properties:
+ *                           rem:
+ *                             type: number
+ *                             nullable: true
+ *                           deep:
+ *                             type: number
+ *                             nullable: true
+ *                           light:
+ *                             type: number
+ *                             nullable: true
+ *                           efficiency:
+ *                             type: number
+ *                             nullable: true
+ *                       stress_score:
+ *                         type: number
+ *                         format: float
+ *                       stress_contributors:
+ *                         type: object
+ *                         properties:
+ *                           hrv:
+ *                             type: number
+ *                             nullable: true
+ *                           hr:
+ *                             type: number
+ *                             nullable: true
+ *                       respiratory_score:
+ *                         type: number
+ *                         format: float
+ *                       respiratory_contributors:
+ *                         type: object
+ *                         properties:
+ *                           oxygen_saturation:
+ *                             type: number
+ *                             nullable: true
+ *                           breathing_regularity:
+ *                             type: string
+ *                             nullable: true
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Response generation timestamp
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Missing or invalid authorization token"
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

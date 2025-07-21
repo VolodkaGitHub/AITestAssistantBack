@@ -7,6 +7,130 @@ import { validateSessionToken } from '../../lib/auth-database'
  * Lab Results Mention API
  * Returns formatted lab results data for @mention functionality
  */
+
+
+/**
+ * @openapi
+ * /api/mention/lab-results:
+ *   get:
+ *     tags:
+ *       - Mention
+ *     summary: Get user lab results for mention
+ *     description: Returns a formatted list of user lab results to be used in @mention feature. Includes recent and abnormal results.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully returned lab results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 summary:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           test_name:
+ *                             type: string
+ *                           test_value:
+ *                             type: string
+ *                           normal_range:
+ *                             type: string
+ *                           unit:
+ *                             type: string
+ *                           status:
+ *                             type: string
+ *                           test_date:
+ *                             type: string
+ *                             format: date-time
+ *                           ordering_doctor:
+ *                             type: string
+ *                           lab_name:
+ *                             type: string
+ *                           notes:
+ *                             type: string
+ *                           category:
+ *                             type: string
+ *                           created_at:
+ *                             type: string
+ *                             format: date-time
+ *                     recent:
+ *                       type: array
+ *                       description: Lab results from last 30 days
+ *                       items:
+ *                         $ref: '#/components/schemas/LabResult'
+ *                     abnormal:
+ *                       type: array
+ *                       description: Lab results with abnormal status
+ *                       items:
+ *                         $ref: '#/components/schemas/LabResult'
+ *                     total_count:
+ *                       type: integer
+ *                     recent_count:
+ *                       type: integer
+ *                     abnormal_count:
+ *                       type: integer
+ *                     last_test_date:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized (token missing or invalid)
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     LabResult:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         test_name:
+ *           type: string
+ *         test_value:
+ *           type: string
+ *         normal_range:
+ *           type: string
+ *         unit:
+ *           type: string
+ *         status:
+ *           type: string
+ *         test_date:
+ *           type: string
+ *           format: date-time
+ *         ordering_doctor:
+ *           type: string
+ *         lab_name:
+ *           type: string
+ *         notes:
+ *           type: string
+ *         category:
+ *           type: string
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ */
+
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

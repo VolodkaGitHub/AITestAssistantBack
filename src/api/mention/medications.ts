@@ -8,6 +8,69 @@ import { MedicationsService } from '../../lib/medications-service'
  * Returns formatted medication data for @mention functionality
  * Uses shared MedicationsService for consistency
  */
+
+/**
+ * @openapi
+ * /api/mention/medications:
+ *   get:
+ *     summary: Retrieve user medications for mention
+ *     description: Returns formatted medication data for @mention functionality. Uses shared MedicationsService for consistency.
+ *     tags:
+ *       - Mention
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved medications data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 summary:
+ *                   type: string
+ *                   description: Summary description of medications
+ *                   example: "3 active medications including: Aspirin, Ibuprofen, Paracetamol"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     medications:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         description: Medication entry object
+ *                     total_count:
+ *                       type: integer
+ *                       description: Total number of medications
+ *                     active_count:
+ *                       type: integer
+ *                       description: Number of active medications
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Timestamp of response generation
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authorization token required"
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

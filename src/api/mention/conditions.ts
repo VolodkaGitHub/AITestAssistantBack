@@ -7,6 +7,61 @@ import { validateSessionToken } from '../../lib/auth-database'
  * Conditions Mention API
  * Returns formatted medical conditions data for @mention functionality
  */
+
+/**
+ * @openapi
+ * /api/mention/conditions:
+ *   get:
+ *     tags:
+ *       - Mention
+ *     summary: Get user conditions for mention
+ *     description: Returns a formatted list of user conditions to be used in the @mention feature. Supports max 10 recent active conditions.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully returned conditions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 summary:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     conditions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           condition_id:
+ *                             type: string
+ *                           date_added:
+ *                             type: string
+ *                             format: date-time
+ *                           display_name:
+ *                             type: string
+ *                     total_count:
+ *                       type: integer
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized (token missing or invalid)
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

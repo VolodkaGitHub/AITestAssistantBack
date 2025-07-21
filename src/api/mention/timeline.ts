@@ -7,6 +7,124 @@ import { validateSessionToken } from '../../lib/auth-database'
  * Health Timeline Mention API
  * Returns formatted health timeline data for @mention functionality
  */
+
+/**
+ * @openapi
+ * /api/mention/timeline:
+ *   get:
+ *     summary: Retrieve user health timeline for mention
+ *     description: Returns formatted health timeline data for @mention functionality.
+ *     tags:
+ *       - Mention
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved health timeline data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 summary:
+ *                   type: string
+ *                   description: Summary description of health timeline entries
+ *                   example: "5 health timeline entries, 3 recent (last 30 days), Recent symptoms: fever, cough, fatigue"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     timeline:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           date:
+ *                             type: string
+ *                             format: date
+ *                           symptoms:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                           findings:
+ *                             type: string
+ *                           top_differential_diagnoses:
+ *                             type: string
+ *                           chat_summary:
+ *                             type: string
+ *                           created_at:
+ *                             type: string
+ *                             format: date-time
+ *                           updated_at:
+ *                             type: string
+ *                             format: date-time
+ *                     recent:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/HealthTimelineEntry'
+ *                     total_count:
+ *                       type: integer
+ *                       description: Total number of timeline entries
+ *                     recent_count:
+ *                       type: integer
+ *                       description: Number of recent timeline entries (last 30 days)
+ *                     last_entry_date:
+ *                       type: string
+ *                       format: date
+ *                       nullable: true
+ *                       description: Date of the most recent timeline entry
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Timestamp of the response generation
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Authorization token required"
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ * components:
+ *   schemas:
+ *     HealthTimelineEntry:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         date:
+ *           type: string
+ *           format: date
+ *         symptoms:
+ *           type: array
+ *           items:
+ *             type: string
+ *         findings:
+ *           type: string
+ *         top_differential_diagnoses:
+ *           type: string
+ *         chat_summary:
+ *           type: string
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
