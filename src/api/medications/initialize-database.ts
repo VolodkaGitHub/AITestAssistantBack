@@ -15,6 +15,65 @@ interface InitializeResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/medications/initialize-database:
+ *   post:
+ *     summary: Initialize medications database
+ *     description: One-time initialization and population of the medications database using Merlin API or predefined medications.
+ *     tags:
+ *       - Medications
+ *     responses:
+ *       200:
+ *         description: Initialization successful or already populated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully populated medications database with 200 medications"
+ *                 medications_count:
+ *                   type: integer
+ *                   example: 200
+ *                 already_populated:
+ *                   type: boolean
+ *                   example: false
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Internal server error during initialization
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Database initialization failed"
+ *                 error:
+ *                   type: string
+ *                   example: "Unable to connect to Merlin API"
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<InitializeResponse>

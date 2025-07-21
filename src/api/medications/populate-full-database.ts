@@ -15,6 +15,67 @@ interface PopulateResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/medications/populate-full-database:
+ *   post:
+ *     summary: Full medications database population from Merlin API
+ *     description: >
+ *       One-time complete population of the medications database by fetching data from the Merlin API.
+ *       Initializes schema if needed and imports all medication entries.
+ *     tags:
+ *       - Medications
+ *     responses:
+ *       200:
+ *         description: Successful population of medications database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Successfully populated medications database with 500 medications from Merlin API
+ *                 medications_count:
+ *                   type: integer
+ *                   example: 500
+ *                 already_populated:
+ *                   type: boolean
+ *                   example: false
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Failed to populate medications database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Database population failed
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error message
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PopulateResponse>

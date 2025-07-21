@@ -3,6 +3,69 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { DatabasePool } from '../../lib/database-pool';
 import { getValidJWTToken } from '../../lib/jwt-manager';
 
+/**
+ * @openapi
+ * /api/medications/populate-catalog:
+ *   post:
+ *     summary: Populate medication catalog from external Merlin API
+ *     description: Fetches a list of medications from the Merlin API and stores them in the `medication_catalog` table. Existing data will be cleared and replaced.
+ *     tags:
+ *       - Medications
+ *     responses:
+ *       200:
+ *         description: Catalog populated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Medication catalog populated successfully
+ *                 total_medications:
+ *                   type: integer
+ *                   example: 423
+ *                 processed:
+ *                   type: integer
+ *                   example: 423
+ *       401:
+ *         description: Failed to get authentication token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to get authentication token
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during medication catalog population
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to populate medication catalog
+ *                 details:
+ *                   type: string
+ *                   example: API call failed: 500 Internal Server Error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

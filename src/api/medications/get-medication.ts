@@ -14,6 +14,102 @@ interface GetMedicationResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/medications/get-medication/{id}:
+ *   get:
+ *     summary: Get Medication Details by ID
+ *     description: Retrieves complete medication information from static database.
+ *     tags:
+ *       - Medications
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the medication
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Bearer YOUR_TOKEN_HERE
+ *         description: Bearer token for session authentication
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved medication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medication:
+ *                   $ref: '#/components/schemas/MedicationEntry'
+ *       400:
+ *         description: Invalid or missing ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *       404:
+ *         description: Medication not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     MedicationEntry:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         dosage:
+ *           type: string
+ *         form:
+ *           type: string
+ *         description:
+ *           type: string
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GetMedicationResponse>

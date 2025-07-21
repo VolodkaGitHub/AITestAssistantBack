@@ -72,6 +72,18 @@ import detect from './api/intent/detect';
 import labContext from './api/lab-results/context';
 import labTestConnection from './api/lab-results/test-connection';
 
+import medicationsLinkedAcc from './api/linked-accounts/medications';
+import wearables from './api/linked-accounts/wearables';
+
+import getMedication from './api/medications/get-medication';
+import initDatabaseMedications from './api/medications/initialize-database';
+import populateCatalog from './api/medications/populate-catalog';
+import populateConprehensiveCatalog from './api/medications/populate-comprehensive-catalog';
+import populateFullDatabaseMedications from './api/medications/populate-full-database';
+import scanPrescription from './api/medications/scan-prescription';
+import searchMedications from './api/medications/search';
+import userMedications from './api/medications/user-medications';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -157,6 +169,21 @@ export function setupServices(app: Express, baseUrl: string) {
 
   app.get('/api/lab-results/context', labContext);
   app.get('/api/lab-results/test-connection', labTestConnection);
+
+  // linked-accounts
+  // app.post('/api/linked-accounts/medications', medicationsLinkedAcc);
+  // app.get('/api/linked-accounts/wearables', wearables);
+
+  app.get('/api/medications/get-medication', getMedication);
+  app.post('/api/medications/initialize-database', initDatabaseMedications);
+  app.post('/api/medications/populate-catalog', populateCatalog);
+  app.post('/api/medications/populate-comprehensive-catalog', populateConprehensiveCatalog);
+  app.post('/api/medications/populate-full-database', populateFullDatabaseMedications);
+  app.post('/api/medications/scan-prescription', scanPrescription);
+  app.post('/api/medications/search', searchMedications);
+  app.post('/api/medications/user-medications', userMedications);
+
+
 
   const swaggerOptions = {
     definition: {

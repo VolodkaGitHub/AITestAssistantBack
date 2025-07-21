@@ -16,6 +16,123 @@ interface SearchResponse {
   error?: string;
 }
 
+/**
+ * @openapi
+ * /api/medications/search:
+ *   get:
+ *     summary: Search medications from static database
+ *     description: Search medications by name or therapeutic class without external API calls.
+ *     tags:
+ *       - Medications
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Search query string for medication name or generic name
+ *       - in: query
+ *         name: class
+ *         schema:
+ *           type: string
+ *         description: Therapeutic class to filter medications
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *           minimum: 1
+ *           maximum: 100
+ *         description: Maximum number of results to return
+ *     responses:
+ *       200:
+ *         description: Successful search result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medications:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "med123"
+ *                       name:
+ *                         type: string
+ *                         example: "Aspirin"
+ *                       generic_name:
+ *                         type: string
+ *                         example: "Acetylsalicylic Acid"
+ *                       therapeutic_class:
+ *                         type: string
+ *                         example: "Analgesic"
+ *                 total_count:
+ *                   type: integer
+ *                   example: 20
+ *                 query:
+ *                   type: string
+ *                   example: "aspirin"
+ *       400:
+ *         description: Missing required query parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: 'Query parameter "q" or "class" is required'
+ *       401:
+ *         description: Unauthorized - invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: 'Invalid session token'
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: 'Method not allowed'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: 'Unknown error'
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SearchResponse>

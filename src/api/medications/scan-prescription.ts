@@ -17,6 +17,119 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+/**
+ * @openapi
+ * /api/medications/scan-prescription:
+ *   post:
+ *     summary: Scan and analyze prescription bottle image
+ *     description: Accepts an image upload, extracts medication details using AI, and matches with database.
+ *     tags:
+ *       - Medications
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file of the prescription bottle.
+ *     responses:
+ *       200:
+ *         description: Prescription analyzed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 extracted_data:
+ *                   type: object
+ *                   properties:
+ *                     medication_name:
+ *                       type: string
+ *                       nullable: true
+ *                     dosage:
+ *                       type: string
+ *                       nullable: true
+ *                     quantity:
+ *                       type: string
+ *                       nullable: true
+ *                     frequency:
+ *                       type: string
+ *                       nullable: true
+ *                     doctor:
+ *                       type: string
+ *                       nullable: true
+ *                     pharmacy:
+ *                       type: string
+ *                       nullable: true
+ *                     date_prescribed:
+ *                       type: string
+ *                       nullable: true
+ *                     ndc_number:
+ *                       type: string
+ *                       nullable: true
+ *                     instructions:
+ *                       type: string
+ *                       nullable: true
+ *                     warnings:
+ *                       type: string
+ *                       nullable: true
+ *                     confidence:
+ *                       type: number
+ *                       format: float
+ *                       description: Confidence score (0 to 1)
+ *                 matched_medication:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                 message:
+ *                   type: string
+ *                   example: Prescription bottle analyzed successfully
+ *       400:
+ *         description: Missing image file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: No image file provided
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to analyze prescription bottle
+ *                 details:
+ *                   type: string
+ *                   example: API key not configured
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

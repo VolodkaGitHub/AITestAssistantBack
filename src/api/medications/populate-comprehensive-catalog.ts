@@ -97,6 +97,59 @@ const COMPREHENSIVE_MEDICATIONS = [
   "Colace", "Preparation H", "Cortisone-10", "Neosporin", "Bacitracin"
 ];
 
+/**
+ * @openapi
+ * /api/medications/populate-comprehensive-catalog:
+ *   post:
+ *     summary: Populate medication catalog from static comprehensive medication list
+ *     description: 
+ *     tags:
+ *       - Medications
+ *     responses:
+ *       200:
+ *         description: Catalog populated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Medication catalog populated successfully
+ *                 total_medications:
+ *                   type: integer
+ *                   example: 200
+ *                 processed:
+ *                   type: integer
+ *                   example: 200
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during medication catalog population
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to populate medication catalog
+ *                 details:
+ *                   type: string
+ *                   example: Error message details here
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

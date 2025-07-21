@@ -18,6 +18,277 @@ export interface UserMedication {
   updated_at?: string;
 }
 
+/**
+ * @openapi
+ * /api/medications/user-medications:
+ *   get:
+ *     summary: Get user's medications
+ *     description: Retrieve the list of medications for the authenticated user.
+ *     tags:
+ *       - Medications
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user medications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medications:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/UserMedication'
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authentication required
+ *       405:
+ *         description: Method not allowed
+ *   post:
+ *     summary: Add a new medication for the user
+ *     description: Add a medication entry for the authenticated user.
+ *     tags:
+ *       - Medications
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Medication data to add
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserMedicationInput'
+ *     responses:
+ *       201:
+ *         description: Medication added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medication:
+ *                   $ref: '#/components/schemas/UserMedication'
+ *                 message:
+ *                   type: string
+ *                   example: Medication added successfully
+ *       400:
+ *         description: Validation error (e.g., missing name)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Medication name is required
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *   put:
+ *     summary: Update an existing user medication
+ *     description: Update medication data by ID for the authenticated user.
+ *     tags:
+ *       - Medications
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Medication data with ID to update
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserMedicationUpdate'
+ *     responses:
+ *       200:
+ *         description: Medication updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 medication:
+ *                   $ref: '#/components/schemas/UserMedication'
+ *                 message:
+ *                   type: string
+ *                   example: Medication updated successfully
+ *       400:
+ *         description: Validation error (e.g., missing ID)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Medication ID is required for updates
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       404:
+ *         description: Medication not found or access denied
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Medication not found or access denied
+ *   delete:
+ *     summary: Delete a user medication by ID
+ *     description: Remove a medication entry by ID for the authenticated user.
+ *     tags:
+ *       - Medications
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the medication to delete
+ *     responses:
+ *       200:
+ *         description: Medication deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Medication deleted successfully
+ *       400:
+ *         description: Missing medication ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Medication ID is required
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       404:
+ *         description: Medication not found or access denied
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Medication not found or access denied
+ *
+ * components:
+ *   schemas:
+ *     UserMedication:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "123e4567-e89b-12d3-a456-426614174000"
+ *         user_id:
+ *           type: string
+ *           example: "user-789"
+ *         name:
+ *           type: string
+ *           example: "Lisinopril"
+ *         dosage:
+ *           type: string
+ *           example: "10mg"
+ *         frequency:
+ *           type: string
+ *           example: "Once daily"
+ *         start_date:
+ *           type: string
+ *           format: date
+ *           example: "2024-01-01"
+ *         end_date:
+ *           type: string
+ *           format: date
+ *           example: "2024-12-31"
+ *         status:
+ *           type: string
+ *           example: "active"
+ *         prescribing_doctor:
+ *           type: string
+ *           example: "Dr. Smith"
+ *         notes:
+ *           type: string
+ *           example: "Take with food"
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           example: "2024-05-01T12:00:00Z"
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *           example: "2024-05-10T12:00:00Z"
+ *     UserMedicationInput:
+ *       type: object
+ *       required:
+ *         - name
+ *         - status
+ *       properties:
+ *         name:
+ *           type: string
+ *           example: "Lisinopril"
+ *         dosage:
+ *           type: string
+ *           example: "10mg"
+ *         frequency:
+ *           type: string
+ *           example: "Once daily"
+ *         start_date:
+ *           type: string
+ *           format: date
+ *           example: "2024-01-01"
+ *         end_date:
+ *           type: string
+ *           format: date
+ *           example: "2024-12-31"
+ *         status:
+ *           type: string
+ *           example: "active"
+ *         prescribing_doctor:
+ *           type: string
+ *           example: "Dr. Smith"
+ *         notes:
+ *           type: string
+ *           example: "Take with food"
+ *     UserMedicationUpdate:
+ *       allOf:
+ *         - $ref: '#/components/schemas/UserMedicationInput'
+ *         - type: object
+ *           required:
+ *             - id
+ *           properties:
+ *             id:
+ *               type: string
+ *               example: "123e4567-e89b-12d3-a456-426614174000"
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse
