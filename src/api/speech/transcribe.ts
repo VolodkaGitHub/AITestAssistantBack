@@ -16,6 +16,75 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+/**
+ * @openapi
+ * /api/speech/transcribe:
+ *   post:
+ *     summary: Transcribe an audio file using OpenAI Whisper
+ *     description: Upload an audio file (max 25MB) and receive a text transcription.
+ *     tags:
+ *       - Speech
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               audio:
+ *                 type: string
+ *                 format: binary
+ *                 description: Audio file to transcribe (max 25MB)
+ *     responses:
+ *       200:
+ *         description: Transcription successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 text:
+ *                   type: string
+ *                   description: Transcribed text from the audio file
+ *                   example: "Hello, how can I help you today?"
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: No audio file provided or invalid file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: No audio file provided
+ *       405:
+ *         description: Method not allowed (only POST)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during transcription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to transcribe audio
+ *                 details:
+ *                   type: string
+ *                   example: "Error message details here"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

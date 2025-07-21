@@ -95,6 +95,38 @@ import timelineMention from './api/mention/timeline';
 import vitalsMention from './api/mention/vitals';
 import wearablesMention from './api/mention/wearables';
 
+import activityProfile from './api/profile/activity';
+import indexProfile from './api/profile/index';
+import sessionsProfile from './api/profile/sessions';
+
+import deleteScheduledPrompts from './api/scheduled-prompts/delete';
+import executeScheduledPrompts from './api/scheduled-prompts/execute';
+import initScheduledPrompts from './api/scheduled-prompts/init-scheduler';
+import shareScheduledPrompts from './api/scheduled-prompts/share';
+import simpleCreateScheduledPrompts from './api/scheduled-prompts/simple-create';
+import simpleListScheduledPrompts from './api/scheduled-prompts/simple-list';
+import updateScheduledPrompts from './api/scheduled-prompts/update';
+
+import lookup from './api/sdco/lookup';
+
+import clearChatSession from './api/session/clear-chat';
+import createSession from './api/session/create';
+import refreshDiagnosis from './api/session/refresh-diagnosis';
+import statusSession from './api/session/status';
+
+import downloadPdf from './api/share/download-pdf';
+import emailFriend from './api/share/email-friend';
+import emailSelf from './api/share/email-self';
+import initDatabaseShare from './api/share/init-database';
+import internalShare from './api/share/internal-share';
+import sendEmail from './api/share/send-email';
+
+import transcribe from './api/speech/transcribe';
+
+import queueSymptoms from './api/symptoms/queue';
+import searchSymptoms from './api/symptoms/search';
+
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -205,6 +237,40 @@ export function setupServices(app: Express, baseUrl: string) {
   app.get('/api/mention/timeline', timelineMention);
   app.get('/api/mention/vitals', vitalsMention);
   app.get('/api/mention/wearables', wearablesMention);
+
+  app.get('/api/profile/activity', activityProfile);
+  app.get('/api/profile/index', indexProfile);
+  app.put('/api/profile/index', indexProfile);
+  app.delete('/api/profile/index', indexProfile);
+  app.get('/api/profile/sessions', sessionsProfile);
+
+  app.delete('/api/scheduled-prompts/delete', deleteScheduledPrompts);
+  // app.post('/api/scheduled-prompts/execute', executeScheduledPrompts);
+  // app.get('/api/scheduled-prompts/init-scheduler', initScheduledPrompts);
+  // app.post('/api/scheduled-prompts/init-scheduler', initScheduledPrompts);
+  // app.post('/api/scheduled-prompts/share', shareScheduledPrompts);
+  app.post('/api/scheduled-prompts/simple-create', simpleCreateScheduledPrompts);
+  app.get('/api/scheduled-prompts/simple-list', simpleListScheduledPrompts);
+  app.put('/api/scheduled-prompts/update', updateScheduledPrompts);
+  
+  app.put('/api/sdco/lookup', lookup);
+
+  app.post('/api/session/clear-chat', clearChatSession);
+  // app.post('/api/session/create', createSession);
+  app.post('/api/session/refresh-diagnosis', refreshDiagnosis);
+  app.post('/api/session/status', statusSession);
+
+  app.post('/api/share/download-pdf', downloadPdf);
+  // app.post('/api/share/email-friend', emailFriend);
+  app.post('/api/share/email-self', emailSelf);
+  app.post('/api/share/init-database', initDatabaseShare);
+  app.post('/api/share/internal-share', internalShare);
+  app.post('/api/share/send-email', sendEmail);
+
+  //app.post('/api/speech/transcribe', transcribe);
+
+  app.post('/api/symptoms/queue', queueSymptoms);
+  app.post('/api/symptoms/search', searchSymptoms);
 
   const swaggerOptions = {
     definition: {
