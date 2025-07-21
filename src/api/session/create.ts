@@ -118,6 +118,115 @@ async function getNextUnansweredQuestion(sessionId: string, token: string): Prom
   }
 }
 
+/**
+ * @openapi
+ * /api/session/create:
+ *   post:
+ *     summary: Create a new diagnostic session optimized for speed
+ *     description: |
+ *       Starts a diagnostic session by processing patient data, symptoms,
+ *       and user authentication. Supports backward-compatible request formats,
+ *       test mode bypass, and fallback session creation.
+ *     tags:
+ *       - Session
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               patientData:
+ *                 type: object
+ *                 description: Patient information object.
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *               initialSymptoms:
+ *                 type: string
+ *                 description: Initial symptoms text input.
+ *               userInput:
+ *                 type: string
+ *                 description: Alternate field for symptoms (backward compatibility).
+ *               userEmail:
+ *                 type: string
+ *                 format: email
+ *                 description: Alternate field for patient email (backward compatibility).
+ *               sessionToken:
+ *                 type: string
+ *                 description: User session token for authentication.
+ *               testMode:
+ *                 type: boolean
+ *                 description: Flag to bypass authentication for scalability testing.
+ *     responses:
+ *       200:
+ *         description: Diagnostic session created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sessionId:
+ *                   type: string
+ *                   example: "session_abc123xyz"
+ *                 differentialDiagnosis:
+ *                   type: object
+ *                   description: Differential diagnosis data.
+ *                 firstQuestion:
+ *                   type: object
+ *                   description: The first diagnostic question to ask the user.
+ *                 total_symptoms_processed:
+ *                   type: integer
+ *                   example: 3
+ *                 fallbackMode:
+ *                   type: boolean
+ *                   description: Indicates if fallback mode was used (optional).
+ *       400:
+ *         description: Missing required symptoms or user input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Missing symptoms or user input
+ *       401:
+ *         description: Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authentication required. Please log in to create a diagnostic session.
+ *       405:
+ *         description: Method not allowed - only POST supported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during session creation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to create clinical session
+ *                 details:
+ *                   type: string
+ *                   example: Unexpected error message
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log('🚀 SESSION CREATE - OPTIMIZED FOR SPEED')
   const sessionStartTime = Date.now()
@@ -795,12 +904,12 @@ async function getFirstDiagnosticQuestion(sessionId: string, jwtToken: string): 
   }
 }
 
-// Export with rate limiting protection
-export default withScalableMiddleware('SESSION_CREATE', {
+export const scalableHandler = withScalableMiddleware('SESSION_CREATE', {
   requireSession: false,
   requireUserContext: false
-})(handler)
+})(handler);
 
+// Експортуємо expressAdapter як дефолтний експорт (для Express)
 export default async function expressAdapter(req: Request, res: Response) {
   return await handler(req as any, res as any);
 }

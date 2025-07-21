@@ -11,6 +11,84 @@ interface RefreshDiagnosisResponse {
   sessionId: string
 }
 
+/**
+ * @openapi
+ * /api/session/refresh-diagnosis:
+ *   post:
+ *     summary: Refresh differential diagnosis for an active session
+ *     description: Fetches updated differential diagnosis data from Merlin API based on the given session ID.
+ *     tags:
+ *       - Session
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionId
+ *             properties:
+ *               sessionId:
+ *                 type: string
+ *                 description: ID of the diagnostic session to refresh diagnosis for.
+ *     responses:
+ *       200:
+ *         description: Updated differential diagnosis retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 differentialDiagnosis:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     description: Diagnostic condition with probability > 5%
+ *                 sessionId:
+ *                   type: string
+ *                   description: Session ID corresponding to the refreshed diagnosis.
+ *       400:
+ *         description: Missing required sessionId in request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Session ID is required
+ *       401:
+ *         description: Authentication failed due to missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authentication failed
+ *       405:
+ *         description: Method not allowed - only POST supported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during refresh operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<RefreshDiagnosisResponse | { error: string }>

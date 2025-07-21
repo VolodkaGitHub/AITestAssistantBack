@@ -5,6 +5,94 @@ interface ClearChatRequest {
   sessionToken: string
 }
 
+/**
+ * @openapi
+ * /api/session/clear-chat:
+ *   post:
+ *     summary: Clear diagnostic chat session
+ *     description: Clears diagnostic chat session data (messages, questions, etc.) but keeps user authentication active.
+ *     tags:
+ *       - Session
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionToken
+ *             properties:
+ *               sessionToken:
+ *                 type: string
+ *                 description: User session token to validate the authenticated session.
+ *     responses:
+ *       200:
+ *         description: Chat cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Chat cleared successfully
+ *                 userSession:
+ *                   type: object
+ *                   properties:
+ *                     sessionToken:
+ *                       type: string
+ *                       example: abc123sessiontoken
+ *                     user:
+ *                       type: object
+ *                       description: Authenticated user data returned from session validation
+ *                     remainsAuthenticated:
+ *                       type: boolean
+ *                       example: true
+ *       400:
+ *         description: Missing required sessionToken in request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Session token is required
+ *       401:
+ *         description: Unauthorized - invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid session token
+ *       405:
+ *         description: Method not allowed, only POST supported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
