@@ -7,6 +7,147 @@ import { getLinkedAccounts } from '../../lib/account-linking-database'
 import EmailService from '../../lib/email-service'
 import { DatabasePool } from '../../lib/database-pool';
 
+/**
+ * @openapi
+ * /api/scheduled-prompts/share:
+ *   post:
+ *     tags:
+ *       - ScheduledPrompts
+ *     summary: Share a scheduled prompt with a linked account
+ *     description: Allows a user to share one of their scheduled prompts with a linked account, with specified permissions.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - prompt_id
+ *               - shared_with_email
+ *               - permissions
+ *             properties:
+ *               prompt_id:
+ *                 type: string
+ *                 description: ID of the scheduled prompt to share
+ *               shared_with_email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email address of the linked account to share with
+ *               permissions:
+ *                 type: object
+ *                 properties:
+ *                   view_results:
+ *                     type: boolean
+ *                     description: Permission to view prompt results
+ *                   edit_prompt:
+ *                     type: boolean
+ *                     description: Permission to edit the prompt
+ *                   receive_emails:
+ *                     type: boolean
+ *                     description: Permission to receive emails related to the prompt
+ *             example:
+ *               prompt_id: "1234abcd"
+ *               shared_with_email: "linkeduser@example.com"
+ *               permissions:
+ *                 view_results: true
+ *                 edit_prompt: false
+ *                 receive_emails: true
+ *     responses:
+ *       200:
+ *         description: Prompt shared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Prompt shared successfully"
+ *                 shared_with:
+ *                   type: string
+ *                   format: email
+ *                   example: "linkeduser@example.com"
+ *                 permissions:
+ *                   type: object
+ *                   properties:
+ *                     view_results:
+ *                       type: boolean
+ *                     edit_prompt:
+ *                       type: boolean
+ *                     receive_emails:
+ *                       type: boolean
+ *                 email_sent:
+ *                   type: boolean
+ *                   description: Indicates if notification email was sent
+ *                 email_error:
+ *                   type: string
+ *                   nullable: true
+ *                   description: Error message if email sending failed
+ *       400:
+ *         description: Missing required fields in the request body
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Unauthorized due to missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Forbidden - trying to share with non-linked account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Scheduled prompt not found or access denied
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error while sharing the prompt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *
+ * components:
+ *   schemas:
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         error:
+ *           type: string
+ *           example: "Invalid session"
+ *         details:
+ *           type: string
+ *           nullable: true
+ *           example: "Session token expired"
+ *     Permissions:
+ *       type: object
+ *       properties:
+ *         view_results:
+ *           type: boolean
+ *         edit_prompt:
+ *           type: boolean
+ *         receive_emails:
+ *           type: boolean
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

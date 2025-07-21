@@ -13,6 +13,114 @@ const openai = new OpenAI({
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+/**
+ * @openapi
+ * /api/scheduled-prompts/execute:
+ *   post:
+ *     tags:
+ *       - ScheduledPrompts
+ *     summary: Execute a scheduled prompt with @mention data resolution
+ *     description: >
+ *       Executes the scheduled prompt specified by prompt_id, resolves @mention data types, 
+ *       runs the prompt through OpenAI, logs the execution, and optionally sends the results via email.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - prompt_id
+ *             properties:
+ *               prompt_id:
+ *                 type: string
+ *                 description: ID of the scheduled prompt to execute
+ *                 example: "1234abcd"
+ *               user_email:
+ *                 type: string
+ *                 description: User email to send results (optional, controlled by prompt settings)
+ *                 example: "user@example.com"
+ *     responses:
+ *       200:
+ *         description: Prompt executed successfully with AI results and data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 prompt_id:
+ *                   type: string
+ *                   example: "1234abcd"
+ *                 result:
+ *                   type: string
+ *                   description: AI-generated analysis text
+ *                   example: "Your health data indicates..."
+ *                 mentioned_data:
+ *                   type: object
+ *                   description: Resolved @mention data included in analysis
+ *                 execution_time:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-07-21T10:00:00Z"
+ *                 email_sent:
+ *                   type: boolean
+ *                   description: Whether an email was sent to the user
+ *                   example: true
+ *                 email_message_id:
+ *                   type: string
+ *                   description: Email service message ID if email was sent
+ *                   example: "msg_1234567890"
+ *       400:
+ *         description: Missing or invalid prompt_id in request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Scheduled prompt not found or inactive
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       405:
+ *         description: Method not allowed (only POST accepted)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error during prompt execution
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ * components:
+ *   schemas:
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         error:
+ *           type: string
+ *           example: "Scheduled prompt not found"
+ *         timestamp:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-07-21T10:00:00Z"
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
