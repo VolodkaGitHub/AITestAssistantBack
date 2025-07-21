@@ -2,6 +2,76 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { DatabasePool } from '../../lib/database-pool';
 
+/**
+ * @openapi
+ * /api/memory/list:
+ *   get:
+ *     summary: Get list of user memories
+ *     description: Returns the list of memories for an authenticated user, ordered by importance and extraction date.
+ *     tags:
+ *       - Memory
+ *     parameters:
+ *       - in: query
+ *         name: sessionToken
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Session token for user authentication
+ *     responses:
+ *       200:
+ *         description: A list of user memories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 count:
+ *                   type: integer
+ *                   example: 2
+ *                 memories:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       memoryType:
+ *                         type: string
+ *                       summary:
+ *                         type: string
+ *                       details:
+ *                         type: object
+ *                       confidence:
+ *                         type: number
+ *                       importance:
+ *                         type: number
+ *                       relatedSymptoms:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       tags:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       extractedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *       400:
+ *         description: Missing session token
+ *       401:
+ *         description: Invalid session token
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

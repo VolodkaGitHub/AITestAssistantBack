@@ -2,6 +2,56 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { DatabasePool } from '../../lib/database-pool';
 
+/**
+ * @openapi
+ * /api/memory/delete:
+ *   delete:
+ *     tags:
+ *       - Memory
+ *     summary: Delete a user's memory
+ *     description: Deletes a memory item if the session token is valid and belongs to the user.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionToken
+ *               - memoryId
+ *             properties:
+ *               sessionToken:
+ *                 type: string
+ *                 example: abc123xyz
+ *               memoryId:
+ *                 type: string
+ *                 example: 2ecf35cb-1bba-4f11-b8a2-1234567890ab
+ *     responses:
+ *       200:
+ *         description: Memory successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Memory deleted successfully
+ *       400:
+ *         description: Missing session token or memory ID
+ *       401:
+ *         description: Invalid session
+ *       404:
+ *         description: Memory not found or access denied
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

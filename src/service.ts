@@ -84,6 +84,10 @@ import scanPrescription from './api/medications/scan-prescription';
 import searchMedications from './api/medications/search';
 import userMedications from './api/medications/user-medications';
 
+import deleteMemory from './api/memory/delete';
+import listMemory from './api/memory/list';
+import searchMemory from './api/memory/search';
+
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
 import profile from './api/agent/profile';
@@ -174,16 +178,19 @@ export function setupServices(app: Express, baseUrl: string) {
   // app.post('/api/linked-accounts/medications', medicationsLinkedAcc);
   // app.get('/api/linked-accounts/wearables', wearables);
 
-  app.get('/api/medications/get-medication', getMedication);
+  app.get('/api/medications/get-medication/:id', getMedication);
   app.post('/api/medications/initialize-database', initDatabaseMedications);
   app.post('/api/medications/populate-catalog', populateCatalog);
   app.post('/api/medications/populate-comprehensive-catalog', populateConprehensiveCatalog);
   app.post('/api/medications/populate-full-database', populateFullDatabaseMedications);
-  app.post('/api/medications/scan-prescription', scanPrescription);
+  // app.post('/api/medications/scan-prescription', scanPrescription);
   app.post('/api/medications/search', searchMedications);
   app.post('/api/medications/user-medications', userMedications);
 
-
+  app.delete('/api/memory/delete', deleteMemory);
+  app.get('/api/memory/list', listMemory);
+  //app.get('/api/memory/search', searchMemory);
+  //app.post('/api/memory/search', searchMemory);
 
   const swaggerOptions = {
     definition: {

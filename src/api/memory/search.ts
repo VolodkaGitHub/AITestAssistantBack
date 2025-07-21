@@ -2,6 +2,114 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { neonVectorMemory } from '../../lib/neon-vector-memory'
 
+/**
+ * @openapi
+ * /api/memory/search:
+ *   get:
+ *     summary: Search memories using semantic or hybrid search
+ *     description: Perform a memory search using semantic similarity or hybrid keyword matching. Requires a query string. Can accept an optional session token for user context.
+ *     tags:
+ *       - Memory
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The search query string.
+ *       - in: query
+ *         name: sessionToken
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Optional session token for user validation.
+ *       - in: query
+ *         name: searchType
+ *         schema:
+ *           type: string
+ *           enum: [semantic, hybrid]
+ *         required: false
+ *         description: Type of search to perform (semantic or hybrid). Defaults to hybrid.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         required: false
+ *         description: Maximum number of results to return.
+ *       - in: query
+ *         name: memoryTypes
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         required: false
+ *         description: Optional memory types to filter the search by.
+ *     responses:
+ *       200:
+ *         description: Search results returned successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 stats:
+ *                   type: object
+ *                 searchType:
+ *                   type: string
+ *                 query:
+ *                   type: string
+ *                 resultCount:
+ *                   type: integer
+ *       400:
+ *         description: Missing query parameter.
+ *       405:
+ *         description: Method not allowed.
+ *       500:
+ *         description: Internal server error during memory search.
+ *
+ *   post:
+ *     summary: Search memories using semantic or hybrid search (POST)
+ *     description: Same as GET but allows sending parameters in the request body.
+ *     tags:
+ *       - Memory
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               query:
+ *                 type: string
+ *               sessionToken:
+ *                 type: string
+ *               searchType:
+ *                 type: string
+ *                 enum: [semantic, hybrid]
+ *               limit:
+ *                 type: integer
+ *               memoryTypes:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Search results returned successfully.
+ *       400:
+ *         description: Missing query parameter.
+ *       405:
+ *         description: Method not allowed.
+ *       500:
+ *         description: Internal server error during memory search.
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse
