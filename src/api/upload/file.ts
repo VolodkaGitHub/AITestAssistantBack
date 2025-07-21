@@ -39,6 +39,59 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!
 })
 
+/**
+ * @openapi
+ * /api/upload/file:
+ *   post:
+ *     tags:
+ *       - Upload
+ *     summary: Analyze uploaded medical file
+ *     description: Accepts an image, PDF, or Word document containing medical information. Extracts and analyzes key medical data using OpenAI.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: A medical image (JPG, PNG, GIF, WEBP) or document (PDF, DOC, DOCX)
+ *     responses:
+ *       200:
+ *         description: File successfully analyzed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 fileName:
+ *                   type: string
+ *                   example: lab-results.pdf
+ *                 fileType:
+ *                   type: string
+ *                   example: application/pdf
+ *                 fileSize:
+ *                   type: integer
+ *                   example: 105231
+ *                 analysis:
+ *                   type: string
+ *                   example: |
+ *                     The document contains blood test results with elevated glucose and cholesterol levels. Follow-up with a primary care provider is recommended.
+ *       400:
+ *         description: No file uploaded or unsupported file type
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *       500:
+ *         description: Internal server error during processing
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

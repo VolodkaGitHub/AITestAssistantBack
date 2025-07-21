@@ -2,6 +2,110 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { EnhancedVectorSearch } from '../../lib/enhanced-vector-search'
 
+/**
+ * @openapi
+ * /api/vector/search:
+ *   post:
+ *     tags:
+ *       - SDCO
+ *     summary: Perform enhanced vector search on SDCO documents
+ *     description: Executes a vector search query with optional filters and returns relevant documents with contextual info.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - query
+ *             properties:
+ *               query:
+ *                 type: string
+ *                 example: "chronic pain"
+ *                 description: Text query for the vector search.
+ *               sdco_id:
+ *                 type: string
+ *                 nullable: true
+ *                 example: "sdco12345"
+ *                 description: Optional SDCO document ID for contextual filtering.
+ *               limit:
+ *                 type: integer
+ *                 default: 5
+ *                 description: Maximum number of search results to return.
+ *               body_system:
+ *                 type: string
+ *                 nullable: true
+ *                 example: "nervous system"
+ *                 description: Filter results by body system.
+ *               content_types:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 nullable: true
+ *                 example: ["symptoms", "treatments"]
+ *                 description: Filter by types of content.
+ *     responses:
+ *       200:
+ *         description: Search completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 results:
+ *                   type: array
+ *                   description: List of relevant SDCO documents
+ *                   items:
+ *                     type: object
+ *                 contextual_information:
+ *                   type: object
+ *                   description: Additional context for OpenAI integration
+ *                 search_metadata:
+ *                   type: object
+ *                   properties:
+ *                     query:
+ *                       type: string
+ *                       example: "chronic pain"
+ *                     sdco_id:
+ *                       type: string
+ *                       nullable: true
+ *                       example: "sdco12345"
+ *                     body_system:
+ *                       type: string
+ *                       nullable: true
+ *                       example: "nervous system"
+ *                     result_count:
+ *                       type: integer
+ *                       example: 3
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: '2025-07-21T14:00:00Z'
+ *       400:
+ *         description: Missing or invalid query parameter
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Vector search failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Vector search failed
+ *                 details:
+ *                   type: string
+ *                   example: Unknown error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

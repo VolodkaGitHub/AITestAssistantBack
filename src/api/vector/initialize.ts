@@ -2,6 +2,57 @@ import { Request, Response } from 'express';
 import { NextApiRequest, NextApiResponse } from 'next'
 import { VectorSearchManager } from '../../lib/vector-search-manager'
 
+/**
+ * @openapi
+ * /api/vector/initialize:
+ *   post:
+ *     tags:
+ *       - Vector
+ *     summary: Initialize the vector search database
+ *     description: Ensures that the vector search database is ready for operations and returns current database stats.
+ *     responses:
+ *       200:
+ *         description: Vector search database initialized successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Vector search database initialized successfully
+ *                 stats:
+ *                   type: object
+ *                   properties:
+ *                     documentCount:
+ *                       type: number
+ *                       example: 42
+ *                     isReady:
+ *                       type: boolean
+ *                       example: true
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Internal server error during initialization
+ *                 details:
+ *                   type: string
+ *                   example: DATABASE_URL environment variable not set
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

@@ -2,6 +2,52 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { EnhancedVectorSearch } from '../../lib/enhanced-vector-search'
 
+/**
+ * @openapi
+ * /api/vector/populate:
+ *   post:
+ *     tags:
+ *       - Vector
+ *     summary: Populate enhanced SDCO vector search system
+ *     description: Initializes database and populates SDCO documents for vector search.
+ *     responses:
+ *       200:
+ *         description: Vector search system populated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Enhanced vector search system populated successfully
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: '2025-07-21T14:00:00Z'
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Failed to populate enhanced vector search system
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Failed to populate enhanced vector search system
+ *                 details:
+ *                   type: string
+ *                   example: Unknown error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

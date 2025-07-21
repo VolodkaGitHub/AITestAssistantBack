@@ -126,6 +126,13 @@ import transcribe from './api/speech/transcribe';
 import queueSymptoms from './api/symptoms/queue';
 import searchSymptoms from './api/symptoms/search';
 
+import fileUpload from './api/upload/file';
+
+import initializeVector from './api/vector/initialize';
+import populateFullSdco from './api/vector/populate-full-sdco';
+import populateVector from './api/vector/populate';
+import searchVector from './api/vector/search';
+
 
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
@@ -271,6 +278,13 @@ export function setupServices(app: Express, baseUrl: string) {
 
   app.post('/api/symptoms/queue', queueSymptoms);
   app.post('/api/symptoms/search', searchSymptoms);
+
+  // app.post('/api/upload/file', fileUpload);
+
+  app.post('/api/vector/initialize', initializeVector);
+  app.post('/api/vector/populate-full-sdco', populateFullSdco);
+  app.post('/api/vector/populate', populateVector);
+  app.post('/api/vector/search', searchVector);
 
   const swaggerOptions = {
     definition: {

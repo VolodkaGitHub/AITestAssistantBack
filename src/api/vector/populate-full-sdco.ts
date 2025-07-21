@@ -202,6 +202,84 @@ function determineBodySystem(displayName: string, categories: any[]): string {
   return 'general'
 }
 
+/**
+ * @openapi
+ * /api/vector/populate-full-sdco:
+ *   post:
+ *     tags:
+ *       - Vector
+ *     summary: Populate comprehensive SDCO documents
+ *     description: >
+ *       Creates and populates the enhanced SDCO documents table with comprehensive medical data,
+ *       including fields such as symptoms, treatments, risk factors, diagnostic criteria, and more.
+ *       Supports optional limit parameter to limit number of documents processed.
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               limit:
+ *                 type: integer
+ *                 description: Optional limit on number of SDCO documents to process (for testing)
+ *                 example: 10
+ *     responses:
+ *       200:
+ *         description: SDCO documents populated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Comprehensive SDCO documents populated successfully
+ *                 statistics:
+ *                   type: object
+ *                   properties:
+ *                     processed_count:
+ *                       type: integer
+ *                       example: 100
+ *                     enriched_count:
+ *                       type: integer
+ *                       example: 90
+ *                     error_count:
+ *                       type: integer
+ *                       example: 10
+ *                     total_documents:
+ *                       type: integer
+ *                       example: 120
+ *                     enriched_documents:
+ *                       type: integer
+ *                       example: 110
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: '2025-07-21T14:00:00Z'
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Failed to populate comprehensive SDCO documents
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Failed to populate comprehensive SDCO documents
+ *                 details:
+ *                   type: string
+ *                   example: Unknown error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
