@@ -5,6 +5,96 @@ import { WearablesDatabase } from '../../lib/wearables-database'
 import { validateSessionToken } from '../../lib/auth-database'
 import { withScalableMiddleware } from '../../lib/api-middleware'
 
+/**
+ * @openapi
+ * /api/wearables/data:
+ *   get:
+ *     tags:
+ *       - Wearables
+ *     summary: Get health data from connected wearable devices
+ *     description: >
+ *       Retrieves sleep, activity, heart rate, and body composition data
+ *       from all wearable devices connected by the user over the specified number of days.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: string
+ *           default: "7"
+ *         description: Number of days of health data to retrieve (default is 7)
+ *     responses:
+ *       200:
+ *         description: Wearable health data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 connections:
+ *                   type: integer
+ *                   example: 2
+ *                 health_data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       provider:
+ *                         type: string
+ *                         example: "FITBIT"
+ *                       data:
+ *                         type: object
+ *                         properties:
+ *                           sleep:
+ *                             type: array
+ *                             description: Sleep data entries
+ *                           activity:
+ *                             type: array
+ *                             description: Activity data entries
+ *                           heart_rate:
+ *                             type: array
+ *                             description: Heart rate data entries
+ *                           body:
+ *                             type: array
+ *                             description: Body composition data entries
+ *                       summary:
+ *                         type: object
+ *                         properties:
+ *                           total_data_points:
+ *                             type: integer
+ *                             example: 42
+ *                           latest_sleep:
+ *                             type: object
+ *                             nullable: true
+ *                           latest_activity:
+ *                             type: object
+ *                             nullable: true
+ *                           latest_heart_rate:
+ *                             type: object
+ *                             nullable: true
+ *                           latest_body:
+ *                             type: object
+ *                             nullable: true
+ *                       last_sync:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-21T12:34:56Z"
+ *                 last_updated:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-07-21T12:34:56Z"
+ *                 message:
+ *                   type: string
+ *                   example: "No wearable devices connected"
+ *       401:
+ *         description: Missing or invalid authorization token
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -106,7 +196,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 // Export with rate limiting protection
-export default withScalableMiddleware("GENERAL_API", {
+export const wrappedHandler = withScalableMiddleware("GENERAL_API", {
   requireSession: false,
   requireUserContext: false
 })(handler)

@@ -10,6 +10,56 @@ import { Request, Response } from 'express';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { dailyHealthAggregator } from '../../lib/daily-health-aggregator';
 
+/**
+ * @openapi
+ * /api/terra/backfill-daily-scores:
+ *   post:
+ *     summary: Re-aggregate daily scores with the new averaging system
+ *     description: Deprecated. Use /api/terra/sync with sync_type: 'enrichment' instead.
+ *     tags:
+ *       - Terra
+ *     responses:
+ *       200:
+ *         description: Daily scores backfill completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Daily scores backfill completed with device averaging
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during backfill process
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Detailed error message
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

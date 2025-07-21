@@ -8,6 +8,114 @@ import { terraClient } from '../../lib/terra-client'
  * Daily data sync endpoint for Terra API wearables data
  * Syncs last 30 days of data for all connected devices
  */
+
+/**
+ * @openapi
+ * /api/wearables/sync-daily:
+ *   post:
+ *     summary: Sync last 30 days of data for all connected wearable devices
+ *     description: >
+ *       Performs a comprehensive daily data synchronization from the Terra API
+ *       for all wearable devices connected to the authorized user. Fetches and
+ *       stores activity, sleep, heart rate, and body data for the last 30 days.
+ *     tags:
+ *       - Wearables
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Bearer token for user authorization
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *     responses:
+ *       200:
+ *         description: Successful synchronization of wearable data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Successfully synced 28 days of data
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     total_connections:
+ *                       type: integer
+ *                       example: 2
+ *                     total_synced_days:
+ *                       type: integer
+ *                       example: 28
+ *                     sync_period:
+ *                       type: string
+ *                       example: 2025-06-20 to 2025-07-20
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           provider:
+ *                             type: string
+ *                             example: OURA
+ *                           synced_days:
+ *                             type: integer
+ *                             example: 28
+ *                           activity_records:
+ *                             type: integer
+ *                             example: 28
+ *                           sleep_records:
+ *                             type: integer
+ *                             example: 28
+ *                           status:
+ *                             type: string
+ *                             example: success
+ *                           error:
+ *                             type: string
+ *                             nullable: true
+ *                             example: null
+ *       401:
+ *         description: Unauthorized access (missing or invalid token)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Missing or invalid authorization token
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error during synchronization
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Failed to sync wearable data
+ *                 details:
+ *                   type: string
+ *                   example: Database connection error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

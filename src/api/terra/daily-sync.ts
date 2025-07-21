@@ -19,6 +19,59 @@ interface TerraUser {
   last_sync: string
 }
 
+/**
+ * @openapi
+ * /api/terra/daily-sync:
+ *   post:
+ *     summary: Deprecated daily Terra data sync (use /api/terra/sync instead)
+ *     description: |
+ *       **[DEPRECATED]** Use `/api/terra/sync` with `sync_type: "daily"` instead.  
+ *       This endpoint triggers daily sync of Terra data (e.g. sleep, daily activity) for all connected users.
+ *       Requires a valid `x-cron-secret` header.
+ *     tags:
+ *       - Terra
+ *     deprecated: true
+ *     security:
+ *       - CronSecretHeader: []
+ *     responses:
+ *       200:
+ *         description: Sync completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Daily Terra sync completed
+ *                 results:
+ *                   type: object
+ *                   properties:
+ *                     total_users:
+ *                       type: integer
+ *                       example: 10
+ *                     successful_syncs:
+ *                       type: integer
+ *                       example: 9
+ *                     failed_syncs:
+ *                       type: integer
+ *                       example: 1
+ *                     errors:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         example: user@example.com: Failed to fetch sleep data
+ *       401:
+ *         description: Unauthorized - invalid or missing cron secret
+ *       405:
+ *         description: Method not allowed - only POST supported
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

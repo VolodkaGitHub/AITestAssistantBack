@@ -6,6 +6,112 @@ import { DatabasePool } from '../../lib/database-pool'
  * @deprecated This endpoint is deprecated. Use /api/terra/connections?mode=simple instead.
  * See TERRA_API_CONSOLIDATION_MIGRATION_GUIDE.md for migration instructions.
  */
+
+/**
+ * @openapi
+ * /api/terra/connections-simple:
+ *   get:
+ *     summary: Get user's wearable connections (deprecated)
+ *     description: Deprecated. Use /api/terra/connections?mode=simple instead.
+ *     tags:
+ *       - Terra
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wearable connections retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 connections:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       provider:
+ *                         type: string
+ *                         example: "oura"
+ *                       provider_display:
+ *                         type: string
+ *                         example: "OURA"
+ *                       status:
+ *                         type: string
+ *                         example: "connected"
+ *                       lastSync:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-21T12:34:56Z"
+ *                       terraUserId:
+ *                         type: string
+ *                         example: "terra_user_123"
+ *                       connectedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-20T10:00:00Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-07-21T12:00:00Z"
+ *                       is_active:
+ *                         type: boolean
+ *                         example: true
+ *                       id:
+ *                         type: string
+ *                         example: "oura-connection"
+ *                 count:
+ *                   type: integer
+ *                   example: 2
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-07-21T13:00:00Z"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authorization token required
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to retrieve wearables connections
+ *                 details:
+ *                   type: string
+ *                   example: Detailed error message
+ *
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

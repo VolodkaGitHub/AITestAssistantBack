@@ -3,6 +3,83 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { validateSessionToken } from '../../lib/auth-database'
 import { LinkedMentionService } from '../../lib/linked-mention-service'
 
+/**
+ * @openapi
+ * /api/linked-accounts/wearables:
+ *   get:
+ *     summary: Fetch wearable data for a linked account
+ *     description: Retrieves wearable device data for a linked user account. Requires valid session token.
+ *     tags:
+ *       - LinkedAccounts
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: linkedAccountId
+ *         in: query
+ *         required: true
+ *         description: ID of the linked account to fetch wearables data for
+ *         schema:
+ *           type: string
+ *           example: "abc123"
+ *     responses:
+ *       200:
+ *         description: Wearables data fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   description: Wearables data object returned from the service
+ *       400:
+ *         description: Missing or invalid linkedAccountId parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Missing linkedAccountId parameter
+ *       401:
+ *         description: Missing or invalid session token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid session token
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error while fetching wearables data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Failed to fetch linked account wearables data
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

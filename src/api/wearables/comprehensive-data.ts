@@ -15,6 +15,101 @@ interface ComprehensiveDataResponse {
   message?: string;
 }
 
+/**
+ * @openapi
+ * /api/wearables/comprehensive-data:
+ *   get:
+ *     tags:
+ *       - Wearables
+ *     summary: Retrieve comprehensive wearable health data
+ *     description: Returns detailed daily health metrics for the last 30 days with summary statistics.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successful retrieval of comprehensive health data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 health_data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                   description: Array of detailed health data points
+ *                 summary:
+ *                   type: object
+ *                   description: Summary statistics for the last 7 days
+ *                   properties:
+ *                     period:
+ *                       type: string
+ *                       example: 7 days
+ *                     data_points:
+ *                       type: integer
+ *                       example: 7
+ *                     averages:
+ *                       type: object
+ *                       properties:
+ *                         steps:
+ *                           type: integer
+ *                           example: 7500
+ *                         calories_burned:
+ *                           type: integer
+ *                           example: 2200
+ *                         heart_rate_avg:
+ *                           type: integer
+ *                           example: 70
+ *                         heart_rate_resting:
+ *                           type: integer
+ *                           example: 55
+ *                         recovery_score:
+ *                           type: integer
+ *                           example: 80
+ *                         activity_score:
+ *                           type: integer
+ *                           example: 60
+ *                         sleep_score:
+ *                           type: integer
+ *                           example: 75
+ *                         stress_level:
+ *                           type: number
+ *                           format: float
+ *                           example: 3.5
+ *                         vo2_max:
+ *                           type: number
+ *                           format: float
+ *                           example: 42.7
+ *                     trends:
+ *                       type: object
+ *                       properties:
+ *                         steps_trend:
+ *                           type: string
+ *                           enum: [up, down, stable, null]
+ *                           example: up
+ *                         calories_trend:
+ *                           type: string
+ *                           enum: [up, down, stable, null]
+ *                           example: stable
+ *                         recovery_trend:
+ *                           type: string
+ *                           enum: [up, down, stable, null]
+ *                           example: down
+ *                         stress_trend:
+ *                           type: string
+ *                           enum: [up, down, stable, null]
+ *                           example: stable
+ *       401:
+ *         description: Authentication required or invalid session
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ComprehensiveDataResponse>

@@ -3,6 +3,64 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { terraClient } from '../../lib/terra-client'
 import { validateSessionToken } from '../../lib/auth-database'
 
+/**
+ * @openapi
+ * /api/wearables/auth:
+ *   post:
+ *     tags:
+ *       - Wearables
+ *     summary: Generate authentication URL for wearable provider
+ *     description: Returns an OAuth authentication URL for the specified wearable provider after validating the user session.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - provider
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 example: "fitbit"
+ *                 description: Name of the wearable provider to authenticate with.
+ *     responses:
+ *       200:
+ *         description: Authentication URL generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 auth_url:
+ *                   type: string
+ *                   example: "https://wearableprovider.com/oauth/authorize?..."
+ *                 provider:
+ *                   type: string
+ *                   example: "fitbit"
+ *       400:
+ *         description: Missing or invalid provider parameter, or failed to generate auth URL
+ *       401:
+ *         description: Missing or invalid session token
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error during authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authentication failed
+ *                 details:
+ *                   type: string
+ *                   example: "Invalid provider"  
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })

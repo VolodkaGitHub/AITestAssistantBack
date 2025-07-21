@@ -3,6 +3,49 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { terraClient } from '../../lib/terra-client'
 import { WearablesDatabase } from '../../lib/wearables-database'
 
+/**
+ * @openapi
+ * /api/wearables/callback:
+ *   get:
+ *     tags:
+ *       - Wearables
+ *     summary: Handle callback from wearable provider authentication
+ *     description: |
+ *       Processes the authentication callback from the wearable provider (Terra),
+ *       saves the connection on success, and redirects the user accordingly.
+ *     parameters:
+ *       - name: user_id
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Terra user ID returned by the wearable provider
+ *       - name: status
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [success, error]
+ *         description: Status of the authentication
+ *       - name: resource
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The wearable provider resource name
+ *       - name: reference_id
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Reference ID of the user in the local system
+ *     responses:
+ *       302:
+ *         description: Redirects user to profile page with success or error query params
+ *       405:
+ *         description: Method not allowed (if method is not GET)
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })

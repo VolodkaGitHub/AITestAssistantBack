@@ -133,6 +133,18 @@ import populateFullSdco from './api/vector/populate-full-sdco';
 import populateVector from './api/vector/populate';
 import searchVector from './api/vector/search';
 
+import authWearables from './api/wearables/auth';
+import callbackWearables from './api/wearables/callback';
+import clearChacheWearables from './api/wearables/clear-cache';
+import comprehensiveDataWearables from './api/wearables/comprehensive-data';
+import contextWearables from './api/wearables/context';
+import dataWearables from './api/wearables/data';
+import deviceDataWearables from './api/wearables/device-data';
+import disconnectWearables from './api/wearables/disconnect';
+import syncDailyWearables from './api/wearables/sync-daily';
+
+import populateAllDatabases from './api/populate-all-databases';
+
 
 import chat from './api/agent/chat';
 import goals from './api/agent/goals';
@@ -285,6 +297,18 @@ export function setupServices(app: Express, baseUrl: string) {
   app.post('/api/vector/populate-full-sdco', populateFullSdco);
   app.post('/api/vector/populate', populateVector);
   app.post('/api/vector/search', searchVector);
+
+  // app.post('/api/wearables/auth', authWearables);
+  // app.get('/api/wearables/callback', callbackWearables);
+  app.post('/api/wearables/clear-cache', clearChacheWearables);
+  app.get('/api/wearables/comprehensive-data', comprehensiveDataWearables);
+  app.get('/api/wearables/context', contextWearables);
+  // app.get('/api/wearables/data', dataWearables);
+  app.get('/api/wearables/device-data', deviceDataWearables);
+  // app.get('/api/wearables/disconnect', disconnectWearables);
+  // app.get('/api/wearables/sync-daily', syncDailyWearables);
+
+  app.get('/api/populate-all-databases', populateAllDatabases);
 
   const swaggerOptions = {
     definition: {

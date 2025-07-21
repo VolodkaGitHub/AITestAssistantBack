@@ -24,6 +24,64 @@ interface WearablesContextResponse {
   message?: string;
 }
 
+/**
+ * @openapi
+ * /api/wearables/context:
+ *   get:
+ *     tags:
+ *       - Wearables
+ *     summary: Get wearable health data context for AI chat
+ *     description: Provides summary and recent metrics from connected wearable devices for AI integration.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wearables context data returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 wearables_context:
+ *                   type: object
+ *                   properties:
+ *                     has_wearables:
+ *                       type: boolean
+ *                       example: true
+ *                     summary:
+ *                       type: string
+ *                       example: "Patient has 2 connected wearable devices: Fitbit, Apple Watch/Health. Recent health metrics: ..."
+ *                     recent_metrics:
+ *                       type: object
+ *                       properties:
+ *                         sleep:
+ *                           type: string
+ *                           example: "7.5 hours sleep (85% efficiency)"
+ *                         activity:
+ *                           type: string
+ *                           example: "8,000 steps, 2300 calories, 5.2km"
+ *                         heart_rate:
+ *                           type: string
+ *                           example: "72 bpm average (60 bpm resting)"
+ *                         body:
+ *                           type: string
+ *                           example: "70kg, 18% body fat"
+ *                     devices:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["Fitbit", "Apple Watch/Health"]
+ *       401:
+ *         description: Authentication required or invalid session
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Internal server error
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<WearablesContextResponse>

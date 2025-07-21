@@ -17,6 +17,114 @@ interface PopulateAllResponse {
   ready_for_merlin?: boolean;
 }
 
+/**
+ * @openapi
+ * /api/webhooks/populate-all-databases:
+ *   post:
+ *     summary: One-time full population of medications and conditions databases
+ *     description: Populates medications and conditions from Merlin API endpoints.
+ *     tags:
+ *       - Webhooks
+ *     responses:
+ *       200:
+ *         description: Successful full population without errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Successfully populated databases: 100 medications, 50 conditions
+ *                 medications_count:
+ *                   type: integer
+ *                   example: 100
+ *                 conditions_count:
+ *                   type: integer
+ *                   example: 50
+ *                 ready_for_merlin:
+ *                   type: boolean
+ *                   example: true
+ *       207:
+ *         description: Partial success with some errors
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Partial success: 80 medications, 40 conditions. Some errors occurred.
+ *                 medications_count:
+ *                   type: integer
+ *                   example: 80
+ *                 conditions_count:
+ *                   type: integer
+ *                   example: 40
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 ready_for_merlin:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Missing UMA API credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: UMA API credentials not configured. Please set UMA_API_KEY environment variable.
+ *                 ready_for_merlin:
+ *                   type: boolean
+ *                   example: false
+ *       405:
+ *         description: Method not allowed (only POST supported)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Failed to populate databases or internal error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to populate databases
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 ready_for_merlin:
+ *                   type: boolean
+ *                   example: true
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PopulateAllResponse>

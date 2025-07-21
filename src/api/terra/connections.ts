@@ -20,7 +20,165 @@ interface ConnectionsQuery {
   provider?: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+/**
+ * @openapi
+ * /api/terra/connections:
+ *   get:
+ *     summary: Get wearable device connections
+ *     description: Returns wearable connections for the current user. Supports multiple modes: `detailed`, `simple`, `status`.
+ *     tags:
+ *       - Terra
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: mode
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [detailed, simple, status]
+ *           default: detailed
+ *         description: Response format
+ *       - in: query
+ *         name: include_inactive
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *         description: Include inactive connections
+ *       - in: query
+ *         name: provider
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter connections by provider
+ *     responses:
+ *       200:
+ *         description: Wearable connections retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: object
+ *                   description: Detailed or simple mode
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                     connections:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     count:
+ *                       type: integer
+ *                     mode:
+ *                       type: string
+ *                     metadata:
+ *                       type: object
+ *                 - type: object
+ *                   description: Status mode
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                     status:
+ *                       type: object
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       500:
+ *         description: Server error
+ *
+ *   post:
+ *     summary: Manage a wearable connection
+ *     description: Activate, deactivate, or reconnect a wearable device connection.
+ *     tags:
+ *       - Terra
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - action
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [reconnect, activate, deactivate]
+ *               connection_id:
+ *                 type: string
+ *               provider:
+ *                 type: string
+ *               terra_user_id:
+ *                 type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Action successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid request parameters
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ *
+ *   delete:
+ *     summary: Delete a wearable connection
+ *     description: Soft delete a wearable connection by ID or provider.
+ *     tags:
+ *       - Terra
+ *     parameters:
+ *       - in: query
+ *         name: connection_id
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: ID of the connection
+ *       - in: query
+ *         name: provider
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Provider name of the connection
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Connection deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Connection not found
+ *       500:
+ *         description: Server error
+ *
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     return handleGetConnections(req, res);
   } else if (req.method === 'POST') {

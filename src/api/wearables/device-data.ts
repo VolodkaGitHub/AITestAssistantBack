@@ -14,6 +14,230 @@ interface HealthDataRow {
   sync_timestamp: string
 }
 
+/**
+ * @openapi
+ * /api/wearables/device-data:
+ *   get:
+ *     summary: Get detailed data for a specific wearable device connection
+ *     description: >
+ *       Returns detailed information and the latest health metrics for one
+ *       connected wearable device of the user by provider and id.
+ *     tags:
+ *       - Wearables
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         required: true
+ *         description: Bearer token for user authorization
+ *         schema:
+ *           type: string
+ *           example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       - in: query
+ *         name: provider
+ *         required: true
+ *         description: Provider identifier (e.g., 'GOOGLE', 'OURA')
+ *         schema:
+ *           type: string
+ *           example: OURA
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         description: Connection ID or terra_user_id of the device
+ *         schema:
+ *           type: string
+ *           example: '123e4567-e89b-12d3-a456-426614174000'
+ *     responses:
+ *       200:
+ *         description: Detailed information about the connected device and its health data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 connection:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: Device identifier (terra_user_id)
+ *                     user_id:
+ *                       type: string
+ *                       description: User identifier
+ *                     provider:
+ *                       type: string
+ *                       description: Wearable device provider
+ *                     provider_display:
+ *                       type: string
+ *                       description: Display name of the provider
+ *                     connected_at:
+ *                       type: string
+ *                       format: date-time
+ *                     last_sync:
+ *                       type: string
+ *                       format: date-time
+ *                     is_active:
+ *                       type: boolean
+ *                     status:
+ *                       type: string
+ *                       description: Connection status
+ *                 summary:
+ *                   type: object
+ *                   description: Overall health metrics calculated from device data
+ *                   properties:
+ *                     total_active_minutes:
+ *                       type: number
+ *                     avg_activity_level:
+ *                       type: number
+ *                     strain_level:
+ *                       type: number
+ *                       nullable: true
+ *                     oxygen_saturation:
+ *                       type: number
+ *                       nullable: true
+ *                     vo2_max:
+ *                       type: number
+ *                       nullable: true
+ *                     total_steps:
+ *                       type: number
+ *                     total_calories:
+ *                       type: number
+ *                     avg_sleep_hours:
+ *                       type: number
+ *                     avg_sleep_score:
+ *                       type: number
+ *                     avg_sleep_efficiency:
+ *                       type: number
+ *                     activity_intensity:
+ *                       type: object
+ *                       properties:
+ *                         inactive:
+ *                           type: number
+ *                         low:
+ *                           type: number
+ *                         moderate:
+ *                           type: number
+ *                         high:
+ *                           type: number
+ *                     latest_heart_rate:
+ *                       type: object
+ *                       nullable: true
+ *                     latest_sleep_phases:
+ *                       type: object
+ *                       nullable: true
+ *                     latest_sleep_metrics:
+ *                       type: object
+ *                       nullable: true
+ *                     data_points:
+ *                       type: number
+ *                 recent_data:
+ *                   type: object
+ *                   properties:
+ *                     activity:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     sleep:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     heart_rate:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     body:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     daily_comprehensive:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                 oura_metrics:
+ *                   oneOf:
+ *                     - type: object
+ *                       properties:
+ *                         met_data_available:
+ *                           type: boolean
+ *                         total_intensity_minutes:
+ *                           type: number
+ *                         activity_level_avg:
+ *                           type: number
+ *                         intensity_breakdown:
+ *                           type: object
+ *                           properties:
+ *                             inactive:
+ *                               type: number
+ *                             low:
+ *                               type: number
+ *                             moderate:
+ *                               type: number
+ *                             high:
+ *                               type: number
+ *                         oxygen_monitoring:
+ *                           type: object
+ *                           nullable: true
+ *                         strain_tracking:
+ *                           type: boolean
+ *                     - type: "null"
+ *                   nullable: true
+ *                 last_sync:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Bad request, missing parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Provider and ID are required
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Missing or invalid authorization token
+ *       404:
+ *         description: Device not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Device not found
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to fetch device data
+ *                 details:
+ *                   type: string
+ *                   example: Database connection error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -289,7 +513,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 // Export with rate limiting protection
-export default withScalableMiddleware("GENERAL_API", {
+export const wrappedHandler = withScalableMiddleware("GENERAL_API", {
   requireSession: false,
   requireUserContext: false
 })(handler)

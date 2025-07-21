@@ -7,6 +7,51 @@ import { DatabasePool } from '../../lib/database-pool';
  * Clear Wearables Cache API
  * Clears both database records and instructs frontend to clear localStorage
  */
+
+/**
+ * @openapi
+ * /api/wearables/clear-cache:
+ *   post:
+ *     tags:
+ *       - Wearables
+ *     summary: Clear user's wearable cache
+ *     description: Clears wearable-related data from the database and instructs the frontend to clear localStorage.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wearable cache cleared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Wearable cache cleared successfully
+ *                 action:
+ *                   type: string
+ *                   example: clear_frontend_cache
+ *                 cleared_tables:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - wearable_connections
+ *                     - wearable_health_data
+ *                     - terra_webhook_events
+ *                     - terra_data_sync
+ *       401:
+ *         description: Authorization required or invalid session token
+ *       405:
+ *         description: Method not allowed
+ *       500:
+ *         description: Failed to clear cache due to server error
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
