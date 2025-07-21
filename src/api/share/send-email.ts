@@ -17,6 +17,146 @@ interface SendEmailRequest {
   title: string
 }
 
+/**
+ * @openapi
+ * /api/share/send-email:
+ *   post:
+ *     summary: Send a Treatment AI chat session email to multiple recipients
+ *     description: Sends a formatted email containing chat messages and an optional personal message to multiple email addresses.
+ *     tags:
+ *       - Share
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - emails
+ *               - messages
+ *               - title
+ *             properties:
+ *               emails:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: email
+ *                 example: ["friend1@example.com", "friend2@example.com"]
+ *               personalMessage:
+ *                 type: string
+ *                 description: Optional personal message included in the email
+ *                 example: "Hey, check out this chat session!"
+ *               messages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - content
+ *                     - sender
+ *                     - timestamp
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "msg1"
+ *                     content:
+ *                       type: string
+ *                       example: "Hello, how can I help you?"
+ *                     sender:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "user"
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-07-21T14:30:00Z"
+ *               sessionId:
+ *                 type: string
+ *                 nullable: true
+ *                 example: "session123"
+ *               title:
+ *                 type: string
+ *                 example: "Consultation Summary"
+ *     responses:
+ *       200:
+ *         description: All emails sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Email sent successfully to 3 recipients
+ *                 details:
+ *                   type: object
+ *                   properties:
+ *                     successful:
+ *                       type: integer
+ *                       example: 3
+ *                     failed:
+ *                       type: integer
+ *                       example: 0
+ *       206:
+ *         description: Partial success - some emails failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Email sent to 2 recipients, failed for 1
+ *                 details:
+ *                   type: object
+ *                   properties:
+ *                     successful:
+ *                       type: integer
+ *                       example: 2
+ *                     failed:
+ *                       type: integer
+ *                       example: 1
+ *       400:
+ *         description: Invalid input (missing or invalid emails/messages)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email addresses are required
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error - failed to send emails
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send email
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

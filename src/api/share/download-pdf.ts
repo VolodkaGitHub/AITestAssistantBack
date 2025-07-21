@@ -15,6 +15,98 @@ interface PDFRequest {
   title: string
 }
 
+/**
+ * @openapi
+ * /api/share/download-pdf:
+ *   post:
+ *     summary: Generate a PDF document from a chat session
+ *     description: Creates a PDF file containing chat messages from a treatment AI session, including metadata and timestamps.
+ *     tags:
+ *       - Share
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - messages
+ *               - title
+ *             properties:
+ *               messages:
+ *                 type: array
+ *                 description: List of chat messages to include in the PDF.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - content
+ *                     - sender
+ *                     - timestamp
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "msg_123"
+ *                     content:
+ *                       type: string
+ *                       example: "Hello, how can I help you?"
+ *                     sender:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "assistant"
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-07-21T10:00:00Z"
+ *               sessionId:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Optional session identifier.
+ *                 example: "session_abc123"
+ *               title:
+ *                 type: string
+ *                 description: Title of the PDF document.
+ *                 example: "Treatment AI Chat Session"
+ *     responses:
+ *       200:
+ *         description: PDF document generated successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Bad request, e.g. missing or invalid messages array
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Messages are required
+ *       405:
+ *         description: Method not allowed, only POST supported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error during PDF generation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to generate PDF
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

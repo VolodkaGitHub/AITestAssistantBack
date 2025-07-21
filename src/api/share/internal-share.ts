@@ -18,6 +18,134 @@ interface InternalShareRequest {
   title: string
 }
 
+/**
+ * @openapi
+ * /api/share/internal-share:
+ *   post:
+ *     summary: Share a chat session internally with a linked account
+ *     description: Shares a Treatment AI chat session with a linked account of the authenticated user, stores the share, creates a notification, and logs the activity.
+ *     tags:
+ *       - Share
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Details of the linked account, messages, session, and title to share
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - linkedAccountId
+ *               - messages
+ *               - title
+ *             properties:
+ *               linkedAccountId:
+ *                 type: string
+ *                 example: "abc123"
+ *               messages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - content
+ *                     - sender
+ *                     - timestamp
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "msg1"
+ *                     content:
+ *                       type: string
+ *                       example: "Hello, how can I help you?"
+ *                     sender:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "user"
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-07-21T14:30:00Z"
+ *               sessionId:
+ *                 type: string
+ *                 nullable: true
+ *                 example: "session789"
+ *               title:
+ *                 type: string
+ *                 example: "Consultation on treatment plan"
+ *     responses:
+ *       200:
+ *         description: Chat session shared successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Chat session shared successfully
+ *                 shareId:
+ *                   type: string
+ *                   example: share_1626874839203_abcd1234
+ *                 recipientEmail:
+ *                   type: string
+ *                   example: linkeduser@example.com
+ *       400:
+ *         description: Bad request - missing required fields or invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Linked account ID and messages are required
+ *       401:
+ *         description: Unauthorized - authentication required or invalid session
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Authentication required
+ *       404:
+ *         description: Linked account not found or does not belong to user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Linked account not found
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Internal server error - failed to share chat session
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to share chat session
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

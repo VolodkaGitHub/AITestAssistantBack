@@ -4,6 +4,50 @@ import { DatabasePool } from '../../lib/database-pool';
 
 const dbPool = DatabasePool.getInstance()
 
+/**
+ * @openapi
+ * /api/share/init-database:
+ *   post:
+ *     summary: Initialize the database schema for sharing features
+ *     description: Creates tables and indexes needed for sharing chat sessions, email activity logs, user notifications, and sharing activity logs.
+ *     tags:
+ *       - Share
+ *     responses:
+ *       200:
+ *         description: Sharing database schema initialized successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Sharing database schema initialized successfully
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Failed to initialize database schema
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to initialize database schema
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

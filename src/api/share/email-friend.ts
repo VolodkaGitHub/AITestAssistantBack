@@ -21,6 +21,123 @@ interface EmailFriendRequest {
   title: string
 }
 
+/**
+ * @openapi
+ * /api/share/email-friend:
+ *   post:
+ *     summary: Share a Treatment AI chat session with a friend via email
+ *     description: Sends an email containing the chat messages, an optional personal message, and session details to a specified friend.
+ *     tags:
+ *       - Share
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - friendEmail
+ *               - friendName
+ *               - messages
+ *               - title
+ *             properties:
+ *               friendEmail:
+ *                 type: string
+ *                 format: email
+ *                 description: Email address of the friend to send the chat session to.
+ *                 example: friend@example.com
+ *               friendName:
+ *                 type: string
+ *                 description: Name of the friend.
+ *                 example: "Anna"
+ *               personalMessage:
+ *                 type: string
+ *                 description: Optional personal message to include in the email.
+ *                 example: "Hey, check out this chat session!"
+ *               messages:
+ *                 type: array
+ *                 description: List of chat messages to include in the email.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - content
+ *                     - sender
+ *                     - timestamp
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "msg123"
+ *                     content:
+ *                       type: string
+ *                       example: "Hello, how can I assist you today?"
+ *                     sender:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "assistant"
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-07-21T10:00:00Z"
+ *               sessionId:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Optional session identifier.
+ *                 example: "session_abc123"
+ *               title:
+ *                 type: string
+ *                 description: Title of the chat session.
+ *                 example: "Treatment AI Chat Session"
+ *     responses:
+ *       200:
+ *         description: Email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Email sent successfully
+ *                 messageId:
+ *                   type: string
+ *                   description: Identifier for the sent email message
+ *                   example: "abc123xyz"
+ *       400:
+ *         description: Missing or invalid request data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Friend email, name, and messages are required
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error during email sending
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse

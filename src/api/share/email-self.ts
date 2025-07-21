@@ -19,6 +19,110 @@ interface EmailSelfRequest {
   title: string
 }
 
+/**
+ * @openapi
+ * /api/share/email-self:
+ *   post:
+ *     summary: Send a Treatment AI chat session transcript to the user's own email
+ *     description: Sends an email containing the chat messages and session details to the user's email address.
+ *     tags:
+ *       - Share
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - messages
+ *               - title
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email address to send the chat transcript.
+ *                 example: user@example.com
+ *               messages:
+ *                 type: array
+ *                 description: List of chat messages to include in the email.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                     - content
+ *                     - sender
+ *                     - timestamp
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "msg001"
+ *                     content:
+ *                       type: string
+ *                       example: "How can I help you today?"
+ *                     sender:
+ *                       type: string
+ *                       enum: [user, assistant]
+ *                       example: "user"
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-07-21T10:00:00Z"
+ *               sessionId:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Optional session ID associated with the chat.
+ *                 example: "session_xyz789"
+ *               title:
+ *                 type: string
+ *                 description: Title of the chat session.
+ *                 example: "Treatment AI Chat Session"
+ *     responses:
+ *       200:
+ *         description: Email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Email sent successfully
+ *       400:
+ *         description: Missing or invalid request data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Email and messages are required
+ *       405:
+ *         description: Method not allowed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Method not allowed
+ *       500:
+ *         description: Server error while sending email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to send email
+ */
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse
