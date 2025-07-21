@@ -5,6 +5,99 @@ import { getValidJWTToken } from '../../lib/jwt-manager'
 
 const MERLIN_ENDPOINT = 'https://merlin-394631772515.us-central1.run.app'
 
+/**
+ * @openapi
+ * /api/sdco/lookup:
+ *   put:
+ *     tags:
+ *       - SDCO
+ *     summary: Fetch SDCO list from Merlin API
+ *     description: Retrieves the list of SDCO (Standardized Diagnostic Clinical Ontology) references from the Merlin API and filters for headache and chest pain related entries.
+ *     responses:
+ *       200:
+ *         description: SDCO list retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total_count:
+ *                   type: integer
+ *                   description: Total number of SDCO references retrieved
+ *                   example: 150
+ *                 headache_sdcos:
+ *                   type: array
+ *                   description: List of SDCO entries related to headache
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sdco_id:
+ *                         type: string
+ *                         example: "headache_001"
+ *                       display_name:
+ *                         type: string
+ *                         example: "Headache"
+ *                       display_name_layman:
+ *                         type: string
+ *                         example: "Pain in the head"
+ *                 chest_pain_sdcos:
+ *                   type: array
+ *                   description: List of SDCO entries related to chest pain
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sdco_id:
+ *                         type: string
+ *                         example: "chest_pain_001"
+ *                       display_name:
+ *                         type: string
+ *                         example: "Chest Pain"
+ *                       display_name_layman:
+ *                         type: string
+ *                         example: "Pain in the chest"
+ *                 sample_sdcos:
+ *                   type: array
+ *                   description: Sample of first 10 SDCO entries for debugging
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sdco_id:
+ *                         type: string
+ *                         example: "sample_001"
+ *                       display_name:
+ *                         type: string
+ *                         example: "Sample SDCO"
+ *                       display_name_layman:
+ *                         type: string
+ *                         example: "Sample Layman Name"
+ *       405:
+ *         description: Method not allowed, only PUT and GET supported
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Method not allowed"
+ *       500:
+ *         description: Failed to fetch SDCO list due to internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to fetch SDCO list"
+ *                 details:
+ *                   oneOf:
+ *                     - type: string
+ *                     - type: object
+ *                   description: Additional error details from upstream service or internal message
+ *                   example: "Request timeout"
+ */
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
